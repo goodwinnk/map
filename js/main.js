@@ -1,15 +1,16 @@
-var diameter = 960,
+var width = 960,
+    height = 400,
     format = d3.format(",d"),
     color = d3.scale.category20c();
 
 var bubble = d3.layout.pack()
     .sort(null)
-    .size([diameter, diameter])
+    .size([width, height])
     .padding(1.5);
 
 var svg = d3.select("body").append("svg")
-    .attr("width", diameter)
-    .attr("height", diameter)
+    .attr("width", width)
+    .attr("height", height)
     .attr("class", "bubble");
 
 function addIssues(issues) {
@@ -29,4 +30,4 @@ function addIssues(issues) {
         .style("fill", function(d) { return color(d.Priority); });
 }
 
-d3.select(self.frameElement).style("height", diameter + "px");
+d3.select(self.frameElement).style("height", height + "px");
