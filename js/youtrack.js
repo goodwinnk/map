@@ -1,5 +1,5 @@
 function loadIssues() {
-    d3.json("test_data/test-10.json", function (error, data) {
+    d3.json("test_data/test-all.json", function (error, data) {
         var title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
@@ -26,6 +26,10 @@ function adapt(issue) {
             issue[name] = value[0];
         } else {
             issue[field.name] = value;
+        }
+        
+        if (typeof field.color !== "undefined" && field.color != null) {
+            issue[name + "_" + "color"] = field.color.bg
         }
     }
 
