@@ -1,16 +1,13 @@
 function loadIssues() {
-    d3.json(yt("rest/issue/byproject/KT\?filter\=Assignee:goodwinnk&max=4"), function (error, data) {
+    d3.json("test_data/test-1.json", function (error, data) {
         var title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
             var result = "";
-            for (var i = 0; i < data.length; i++) {
-                var issue = adapt(data[i]);
-                result += issue.summary + " " + issue.Priority + " " + issue.votes + "</br>";
-            }
+            var adapted = data.map(adapt);
 
-            title.innerHTML = result;
+            addIssues(adapted);
         }
     });
 }
@@ -31,6 +28,9 @@ function adapt(issue) {
             issue[field.name] = value;
         }
     }
+
+    issue.value = 15;
+    issue.depth = 0;
 
     delete issue.field;
     //noinspection JSValidateTypes
