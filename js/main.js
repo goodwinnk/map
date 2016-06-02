@@ -14,7 +14,7 @@ var svg = d3.select("body").append("svg")
     .attr("class", "bubble");
 
 function addIssues(issues) {
-    var nodes = bubble.nodes({"children":issues});
+    var nodes = bubble.nodes(splitToSubsystems(issues));
 
     var node = svg.selectAll(".node")
         .data(nodes.filter(function (d) {
@@ -31,7 +31,7 @@ function addIssues(issues) {
 
     node.append("title")
         .text(function (d) {
-            return d.id + ": " + d.summary + ": " + d.Priority + ": " + d.State;
+            return d.id + ": " + d.summary + ": " + d.Priority + ": " + d.State + ": " + d.Subsystems;
         });
 
     node.append("circle")
@@ -56,3 +56,27 @@ function addIssues(issues) {
 }
 
 d3.select(self.frameElement).style("height", height + "px");
+
+function splitToSubsystems(issues) {
+    var subsystemNodes = {};
+
+    for (var i = 0; i < issues.length; i++) {
+        var issue = issues[i];
+
+        var subsystem = issue.Subsystems;
+        var node = subsystemNodes[subsystem];
+
+        if (typeof node === "undefined") {
+            node = {
+                children: []
+            };
+            subsystemNodes[subsystem] = node;
+        }
+
+        node.children.push(issue);
+    }
+
+    return {
+        children: d3.values(subsystemNodes)
+    };
+}

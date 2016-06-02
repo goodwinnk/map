@@ -1,5 +1,5 @@
 function loadIssues() {
-    d3.json("test_data/test-all-g.json", function (error, data) {
+    d3.json("test_data/test-all.json", function (error, data) {
         var title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
