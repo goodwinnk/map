@@ -11,7 +11,8 @@ var bubble = d3.layout.pack()
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
-    .attr("class", "bubble");
+    .append("g")
+    .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom));
 
 function addIssues(issues) {
     var nodes = bubble.nodes(splitToSubsystems(issues));
@@ -21,6 +22,7 @@ function addIssues(issues) {
             return !d.children;
         }))
         .enter().append("g")
+
         .attr("class", "node")
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
@@ -38,6 +40,7 @@ function addIssues(issues) {
         .attr("r", function (d) {
             return d.r;
         })
+        .attr("transform", function(d) { return "translate(" + d + ")"; })
         .style("fill", function (d) {
             if (d.Priority_color) {
                 return d.Priority_color;
@@ -48,7 +51,7 @@ function addIssues(issues) {
 
     node.append("circle")
         .attr("r", function (d) {
-            return 5;
+            return d.r / 3;
         })
         .style("fill", function (d) {
             return color(d.State);
@@ -79,4 +82,8 @@ function splitToSubsystems(issues) {
     return {
         children: d3.values(subsystemNodes)
     };
+}
+
+function zoom() {
+    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
 }
