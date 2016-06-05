@@ -1,6 +1,5 @@
-var width = 1200,
-    height = 800,
-    format = d3.format(",d"),
+var width = window.innerWidth,
+    height = window.innerHeight,
     color = d3.scale.category10();
 
 var bubble = d3.layout.pack()
