@@ -7,11 +7,13 @@ var bubble = d3.layout.pack()
     .size([width, height])
     .padding(1.5);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body")
+    .append("svg")
     .attr("width", width)
     .attr("height", height)
-    .append("g")
-    .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom));
+    .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+    .append("g");
+
 
 function addIssues(issues) {
     var nodes = bubble.nodes(splitToSubsystems(issues));
@@ -39,7 +41,6 @@ function addIssues(issues) {
         .attr("r", function (d) {
             return d.r;
         })
-        .attr("transform", function(d) { return "translate(" + d + ")"; })
         .style("fill", function (d) {
             if (d.Priority_color) {
                 return d.Priority_color;
