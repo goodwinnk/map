@@ -57,14 +57,31 @@ function addIssues(issues) {
     //         return color(d.State);
     //     });
 
+    // node.append('text')
+    //     .attr('font-family', 'FontAwesome')
+    //     .attr('font-size', function (d) {
+    //         return "0." + Math.floor(d.commentsCount / 3) + "em";
+    //     })
+    //     .attr('x', function (d) { return -3; })
+    //     .attr('y', function (d) { return 3; })
+    //     .text(function(d) {
+    //         if (d.commentsCount > 0) {
+    //             return '\uf0e6';
+    //         } else {
+    //             return null;
+    //         }
+    //     });
+
     node.append('text')
         .attr('font-family', 'FontAwesome')
-        .attr('font-size', function(d) {
-            return '0.3em'
+        .attr('font-size', function (d) {
+            return "0." + Math.floor(d.votes / 5) + "em";
         })
+        .attr('x', function (d) { return -3; })
+        .attr('y', function (d) { return 3; })
         .text(function(d) {
-            if (d.commentsCount > 0) {
-                return '\uf0e6';
+            if (d.votes > 0) {
+                return '\uf087';
             } else {
                 return null;
             }
