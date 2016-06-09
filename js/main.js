@@ -49,12 +49,25 @@ function addIssues(issues) {
             }
         });
 
-    node.append("circle")
-        .attr("r", function (d) {
-            return d.r / 3;
+    // node.append("circle")
+    //     .attr("r", function (d) {
+    //         return d.r / 3;
+    //     })
+    //     .style("fill", function (d) {
+    //         return color(d.State);
+    //     });
+
+    node.append('text')
+        .attr('font-family', 'FontAwesome')
+        .attr('font-size', function(d) {
+            return '0.3em'
         })
-        .style("fill", function (d) {
-            return color(d.State);
+        .text(function(d) {
+            if (d.commentsCount > 0) {
+                return '\uf0e6';
+            } else {
+                return null;
+            }
         });
 }
 
