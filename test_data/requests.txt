@@ -1,0 +1,2 @@
+http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/IDEA\?max\=100000\&filter\=%23Unresolved > idea_all.json
+http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/IDEA\?max\=1\&filter\=%23Unresolved > idea_1.json
