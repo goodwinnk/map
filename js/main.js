@@ -48,30 +48,7 @@ function addIssues(issues) {
                 return "#aaffff";
             }
         });
-
-    // node.append("circle")
-    //     .attr("r", function (d) {
-    //         return d.r / 3;
-    //     })
-    //     .style("fill", function (d) {
-    //         return color(d.State);
-    //     });
-
-    // node.append('text')
-    //     .attr('font-family', 'FontAwesome')
-    //     .attr('font-size', function (d) {
-    //         return "0." + Math.floor(d.commentsCount / 3) + "em";
-    //     })
-    //     .attr('x', function (d) { return -3; })
-    //     .attr('y', function (d) { return 3; })
-    //     .text(function(d) {
-    //         if (d.commentsCount > 0) {
-    //             return '\uf0e6';
-    //         } else {
-    //             return null;
-    //         }
-    //     });
-
+    
     var MILISECONDS_IN_YEAR = 31536000000;
     var today = Date.now();
 
