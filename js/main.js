@@ -72,6 +72,25 @@ function addIssues(issues) {
     //         }
     //     });
 
+    var MILISECONDS_IN_YEAR = 31536000000;
+    var today = Date.now();
+
+    for (var i = 1; i <= 5; i++) {
+        var numberOfYears = i;
+
+        node.append("circle")
+            .attr("r", function (d) {
+                if (Math.abs(parseInt(d.created) - today) > (numberOfYears * MILISECONDS_IN_YEAR)) {
+                    return d.r / 6 * (6 - numberOfYears);
+                } else {
+                    return null;
+                }
+            })
+            .style("stroke-width", 0.4)
+            .style("stroke", "LightGrey")
+            .style("fill", "none");
+    }
+
     node.append('text')
         .attr('font-family', 'FontAwesome')
         .attr('font-size', function (d) {
