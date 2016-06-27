@@ -55,33 +55,25 @@ function addIssues(issues) {
     for (var i = 1; i <= 5; i++) {
         var numberOfYears = i;
 
-        node.append("circle")
+        node.filter(function (d) { return Math.abs(d.created - today) > (numberOfYears * MILISECONDS_IN_YEAR); })
+            .append("circle")
             .attr("r", function (d) {
-                if (Math.abs(d.created - today) > (numberOfYears * MILISECONDS_IN_YEAR)) {
-                    return d.r / 6 * (6 - numberOfYears);
-                } else {
-                    return null;
-                }
+                return d.r / 6 * (6 - numberOfYears);
             })
-            .style("stroke-width", 0.4)
+            .style("stroke-width", 0.2)
             .style("stroke", "LightGrey")
             .style("fill", "none");
     }
 
-    node.append('text')
+    node.filter(function (d) { return d.votes > 0; })
+        .append('text')
         .attr('font-family', 'FontAwesome')
         .attr('font-size', function (d) {
             return "0." + Math.floor(d.votes / 5) + "em";
         })
         .attr('x', function (d) { return -3; })
         .attr('y', function (d) { return 3; })
-        .text(function(d) {
-            if (d.votes > 0) {
-                return '\uf087';
-            } else {
-                return null;
-            }
-        });
+        .text(function(d) { return '\uf087'; });
 }
 
 d3.select(self.frameElement).style("height", height + "px");
