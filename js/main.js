@@ -29,12 +29,12 @@ function addIssues(issues) {
             return "translate(" + d.x + "," + d.y + ")";
         })
         .on('click', function (d, i) {
-            window.open('https://youtrack.jetbrains.com/issue/' + d.id, '_blank');
+            window.open(d.url, '_blank');
         });
 
     node.append("title")
         .text(function (d) {
-            return d.id + ": " + d.summary + ": " + d.Priority + ": " + d.State + ": " + d.Subsystems;
+            return d.id + ": " + d.summary + ": " + d.priority + ": " + d.state + ": " + d.subsystems;
         });
 
     node.append("circle")
@@ -42,8 +42,8 @@ function addIssues(issues) {
             return d.r;
         })
         .style("fill", function (d) {
-            if (d.Priority_color) {
-                return d.Priority_color;
+            if (d.priorityColor) {
+                return d.priorityColor;
             } else {
                 return "#aaffff";
             }
@@ -57,7 +57,7 @@ function addIssues(issues) {
 
         node.append("circle")
             .attr("r", function (d) {
-                if (Math.abs(parseInt(d.created) - today) > (numberOfYears * MILISECONDS_IN_YEAR)) {
+                if (Math.abs(d.created - today) > (numberOfYears * MILISECONDS_IN_YEAR)) {
                     return d.r / 6 * (6 - numberOfYears);
                 } else {
                     return null;
@@ -92,7 +92,7 @@ function splitToSubsystems(issues) {
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
 
-        var subsystem = issue.Subsystems;
+        var subsystem = issue.subsystems;
         var node = subsystemNodes[subsystem];
 
         if (typeof node === "undefined") {
