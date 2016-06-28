@@ -20,16 +20,39 @@ function addIssues(issues) {
     var nodes = bubble.nodes(root);
 
     var groupNode = svg.selectAll(".group")
-        .data(nodes.filter(function (d) { return d != root && d.children; }))
+        .data(nodes.filter(function (d) {
+            return d != root && d.children;
+        }))
         .enter().append("g")
         .attr("class", "group")
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
-        })
+        });
+
+    groupNode
         .append("circle")
         .attr("r", function (d) {
             return d.r;
         });
+
+    groupNode
+        .append("title")
+        .text(function (d) {
+            return "" + d.groups;
+        });
+
+    // groupNode
+    //     .append("text")
+    //     .text(function (d) {
+    //         return "" + d.groups;
+    //     })
+    //     .attr('font-size', function (d) {
+    //         return "0.1em";
+    //     })
+    //     .style("text-anchor", "middle")
+    //     .attr("y", function (d) {
+    //         -d.y;
+    //     });
 
     var node = svg.selectAll(".issue")
         .data(nodes.filter(function (d) { return !d.children; }))
@@ -97,7 +120,8 @@ function splitToSubsystems(issues) {
 
         if (typeof node === "undefined") {
             node = {
-                children: []
+                children: [],
+                groups: subsystem
             };
             subsystemNodes[subsystem] = node;
         }
