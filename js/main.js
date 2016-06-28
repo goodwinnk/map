@@ -16,15 +16,28 @@ var svg = d3.select("body")
 
 
 function addIssues(issues) {
-    var nodes = bubble.nodes(splitToSubsystems(issues));
+    var root = splitToSubsystems(issues);
+    var nodes = bubble.nodes(root);
 
-    var node = svg.selectAll(".node")
-        .data(nodes.filter(function (d) {
-            return !d.children;
-        }))
+    var groupNode = svg.selectAll(".group")
+        .data(nodes.filter(function (d) { return d != root && d.children; }))
         .enter().append("g")
+        .attr("class", "group")
+        .attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        })
+        .append("circle")
+        .attr("r", function (d) {
+            return d.r;
+        })
+        .style("fill", function (d) {
+            return "#FFFFEE";
+        });
 
-        .attr("class", "node")
+    var node = svg.selectAll(".issue")
+        .data(nodes.filter(function (d) { return !d.children; }))
+        .enter().append("g")
+        .attr("class", "issue")
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
         })
