@@ -1,0 +1,15 @@
+.group {
+}
+
+.issue {
+}
+
+.group circle {
+    fill: #ffffee;
+}
+
+.year_circle {
+    stroke-width: 0.2;
+    stroke: LightGrey;
+    fill: none;
+}

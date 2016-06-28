@@ -29,9 +29,6 @@ function addIssues(issues) {
         .append("circle")
         .attr("r", function (d) {
             return d.r;
-        })
-        .style("fill", function (d) {
-            return "#FFFFEE";
         });
 
     var node = svg.selectAll(".issue")
@@ -73,9 +70,7 @@ function addIssues(issues) {
             .attr("r", function (d) {
                 return d.r / 6 * (6 - numberOfYears);
             })
-            .style("stroke-width", 0.2)
-            .style("stroke", "LightGrey")
-            .style("fill", "none");
+            .attr("class", "year_circle")
     }
 
     node.filter(function (d) { return d.votes > 0; })
