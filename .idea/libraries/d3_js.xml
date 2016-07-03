@@ -8,6 +8,7 @@
     <CLASSES>
       <root url="file://$PROJECT_DIR$/bower_components/d3/d3.js" />
     </CLASSES>
+    <JAVADOC />
     <SOURCES />
   </library>
 </component>

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/IssuesMap.iml" filepath="$PROJECT_DIR$/.idea/IssuesMap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector_main.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector_main.iml" group="youtrack-connector" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector_test.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector_test.iml" group="youtrack-connector" />
     </modules>
   </component>
 </project>
