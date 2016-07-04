@@ -9,6 +9,7 @@ class IssueOverview(
         val state: String,
         val created: Long,
         val votes: Int,
+        val assignee: String?,
         val subsystems: Array<String>) {
     override fun hashCode(): Int = id.hashCode()
 

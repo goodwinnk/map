@@ -38,7 +38,7 @@ fun main(args: Array<String>) {
         Thread.sleep(100)
     }
 
-    File("test_data/kt_all_overview1.json").writeText(Gson().toJson(all.toTypedArray()))
+    File("../web/test_data/kt_all_overview.json").writeText(Gson().toJson(all.toTypedArray()))
 }
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
@@ -55,9 +55,10 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     val state = fieldsMap["State"]!!.array<String>("value")!![0]
     val created = fieldsMap["created"]!!.string("value")!!.toLong()
     val votes = fieldsMap["votes"]!!.string("value")!!.toInt()
+    val assignee = fieldsMap["Assignee"]?.array<JsonObject>("value")?.first()?.string("value")
     val subsystems = fieldsMap["Subsystems"]?.array<String>("value")?.toTypedArray() ?: arrayOf()
 
-    return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, subsystems)
+    return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
 }
 
 fun String.parseJson() : Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!

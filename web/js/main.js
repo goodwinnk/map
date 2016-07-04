@@ -1,6 +1,6 @@
 var width = window.innerWidth,
     height = window.innerHeight,
-    color = d3.scale.category10();
+    color = d3.scale.category20();
 
 var bubble = d3.layout.pack()
     .sort(null)
@@ -67,7 +67,7 @@ function addIssues(issues) {
 
     node.append("title")
         .text(function (d) {
-            return d.id + ": " + d.summary + ": " + d.priority + ": " + d.state + ": " + d.subsystems;
+            return d.id + ": " + d.summary + ": " + d.priority + ": " + d.state + ": " + d.subsystems + " " + d.assignee;
         });
 
     node.append("circle")
