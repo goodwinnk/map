@@ -7,7 +7,7 @@ var bubble = d3.layout.pack()
     .size([width, height])
     .padding(1.5);
 
-var svg = d3.select("body")
+var svg = d3.select("#map")
     .append("svg")
     .attr("width", width)
     .attr("height", height)

@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "d3": "^3.5.17",
-    "components-font-awesome": "^4.6.3"
+    "components-font-awesome": "^4.6.3",
+    "bootstrap": "^3.3.6"
   }
 }
