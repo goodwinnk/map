@@ -38,7 +38,9 @@ fun main(args: Array<String>) {
         Thread.sleep(100)
     }
 
-    File("../web/test_data/kt_all_overview.json").writeText(Gson().toJson(all.toTypedArray()))
+    val output = File("web/test_data/kt_all_overview.json")
+    output.createNewFile()
+    output.writeText(Gson().toJson(all.toTypedArray()))
 }
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
