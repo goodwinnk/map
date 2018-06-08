@@ -3,28 +3,86 @@ package nk.issues.map
 import com.beust.klaxon.*
 import com.google.gson.Gson
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.utils.URIBuilder
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
 
+data class IssuesRequest(
+        val name: String,
+        val filter: String,
+        val fileName: String = "$name.json"
+)
+
+private val requests = listOf(
+        IssuesRequest(
+                "kt-all",
+                "Project: KT #Unresolved"
+        ),
+        IssuesRequest(
+                "kt-ide",
+                "Project: Kotlin #Unresolved Subsystems: {IDE*}"
+        ),
+        IssuesRequest(
+                "kt-tools",
+                "Project: Kotlin #Unresolved Subsystems: {Tools*}"
+        ),
+        IssuesRequest(
+                "kt-compiler",
+                "Project: KT #Unresolved and (" +
+                        "Subsystems: {Backend*} or " +
+                        "Subsystems: {Frontend*} or " +
+                        "Subsystems: IR or " +
+                        "Subsystems: {Language design}" +
+                        ")"
+        ),
+        IssuesRequest(
+                "kt-other",
+                "Project: KT #Unresolved " +
+                        "Subsystems: -{Backend*} " +
+                        "Subsystems: -{Frontend*} " +
+                        "Subsystems: -IR " +
+                        "Subsystems: -{Language design} " +
+                        "Subsystems: -{IDE*} " +
+                        "Subsystems: -{Tools*}"
+        )
+)
+
+private const val NUMBER_PER_REQUEST = 1000
+
 fun main(args: Array<String>) {
-    val filter = "Project%3AKT%20%23Unresolved"
-    var numberPerRequest = 1000
+    for (request in requests) {
+        processRequest(request)
+    }
+}
+
+fun processRequest(request: IssuesRequest) {
+    var numberPerRequest = NUMBER_PER_REQUEST
 
     var number = -1
+    val countRequest = URIBuilder(youTrack("/rest/issue/count")).apply {
+        addParameter("filter", request.filter)
+    }.toString()
+
     while (number == -1) {
-        number = (httpJson(youTrack("/rest/issue/count?filter=$filter")).parseJson() as JsonObject).int("value")!!
+        number = (httpJson(countRequest).parseJson() as JsonObject).int("value")!!
 
         Thread.sleep(100)
     }
 
-    println("Expected: $number")
+    println("Expected for ${request.name}: $number")
 
     val all = LinkedHashSet<IssueOverview>()
     while (all.size < number) {
-        val jsonResult = httpJson(youTrack("/rest/issue?filter=$filter&max=$numberPerRequest&after=${all.size}"))
+        val issuesRequest = URIBuilder(youTrack("/rest/issue")).apply {
+            addParameter("filter", request.filter)
+            addParameter("max", numberPerRequest.toString())
+            addParameter("after", all.size.toString())
+        }.toString()
+
+        val jsonResult = httpJson(issuesRequest)
 
         @Suppress("UNCHECKED_CAST")
         val issues = (jsonResult.parseJson() as JsonObject).array<JsonObject>("issue")!!.map { toIssueOverview(it) }
@@ -38,7 +96,7 @@ fun main(args: Array<String>) {
         Thread.sleep(100)
     }
 
-    val output = File("web/test_data/kt_all_overview.json")
+    val output = File("web/test_data/${request.fileName}")
     output.createNewFile()
     output.writeText(Gson().toJson(all.toTypedArray()))
 }
@@ -63,9 +121,9 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
 }
 
-fun String.parseJson() : Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!
+fun String.parseJson(): Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!
 
-fun parse(path: String) : Any {
+fun parse(path: String): Any {
     FileInputStream(path).use {
         return Parser().parse(it)!!
     }
