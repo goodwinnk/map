@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$/../../youtrack-connector">
       <excludeFolder url="file://$MODULE_DIR$/../../youtrack-connector/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../youtrack-connector/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../youtrack-connector/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

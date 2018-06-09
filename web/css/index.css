@@ -5,12 +5,12 @@
 }
 
 .group circle {
-    fill: #ffffee;
+    fill: #f3f3f3;
 }
 
 .year_circle {
     stroke-width: 0.2;
-    stroke: LightGrey;
+    stroke: Red;
     fill: none;
 }
 

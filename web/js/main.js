@@ -75,7 +75,7 @@ function addIssues(issues) {
             return d.r;
         })
         .style("fill", function (d) {
-            return color(d.state);
+            return color(d.priority);
         });
     
     var MILISECONDS_IN_YEAR = 31536000000;
