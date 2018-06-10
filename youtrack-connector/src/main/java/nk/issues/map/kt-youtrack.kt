@@ -50,10 +50,17 @@ private val requests = listOf(
         )
 )
 
+private val requests_tests = listOf(
+        IssuesRequest(
+                "kt-docs",
+                "Project: KT #Unresolved Subsystems: Docs"
+        )
+)
+
 private const val NUMBER_PER_REQUEST = 1000
 
 fun main(args: Array<String>) {
-    for (request in requests) {
+    for (request in requests_tests) {
         processRequest(request)
     }
 }

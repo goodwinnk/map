@@ -9,6 +9,7 @@ var bubble = d3.layout.pack()
 
 var svg = d3.select("#map")
     .append("svg")
+    .attr("class", "view")
     .attr("width", width)
     .attr("height", height)
     .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
@@ -21,7 +22,7 @@ function addIssues(issues) {
 
     var groupNode = svg.selectAll(".group")
         .data(nodes.filter(function (d) {
-            return d != root && d.children;
+            return d !== root && d.children;
         }))
         .enter().append("g")
         .attr("class", "group")
@@ -55,7 +56,9 @@ function addIssues(issues) {
     //     });
 
     var node = svg.selectAll(".issue")
-        .data(nodes.filter(function (d) { return !d.children; }))
+        .data(nodes.filter(function (d) {
+            return !d.children;
+        }))
         .enter().append("g")
         .attr("class", "issue")
         .attr("transform", function (d) {
@@ -75,8 +78,34 @@ function addIssues(issues) {
             return d.r;
         })
         .style("fill", function (d) {
-            return color(d.priority);
-        });
+            var priority = d.priority;
+            if (priority === "Minor") {
+                return "lightgreen"
+            } else if (priority === "Normal") {
+                return "forestgreen";
+            } else if (priority === "Major") {
+                return "orange";
+            } else if (priority === "Critical") {
+                return "deeppink"
+            }
+
+            return "gray"
+        })
+    ;
+    // node.append("image")
+    //     .attr("xlink:href", "../img/trees.png")
+    //     .attr("x", function (d) {
+    //         return -d.r
+    //     })
+    //     .attr("y", function (d) {
+    //         return -d.r;
+    //     })
+    //     .attr("width", function (d) {
+    //         return d.r * 2;
+    //     })
+    //     .attr("height", function (d) {
+    //         return d.r * 2;
+    //     });
     
     var MILISECONDS_IN_YEAR = 31536000000;
     var today = Date.now();

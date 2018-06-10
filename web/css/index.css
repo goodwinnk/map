@@ -4,8 +4,12 @@
 .issue {
 }
 
+.view {
+    background-color: lightblue;
+}
+
 .group circle {
-    fill: #f3f3f3;
+    fill: #fff1c2;
 }
 
 .year_circle {

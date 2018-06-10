@@ -25,6 +25,8 @@ function fileName() {
             return "kt-tools.json";
         } else if (query === "other") {
             return "kt-other.json";
+        } else if (query === "docs") {
+            return "kt-docs.json"
         }
     }
 
@@ -43,6 +45,8 @@ function updateFilter() {
             name ="Tools";
         } else if (query === "other") {
             name = "Other";
+        } else if (query === "docs") {
+            name = "Docs"
         }
     }
 
