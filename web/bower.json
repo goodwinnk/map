@@ -15,8 +15,8 @@
     "tests"
   ],
   "dependencies": {
-    "d3": "^3.5.17",
-    "components-font-awesome": "^4.6.3",
+    "d3": "5.4.0",
+    "components-font-awesome": "5.0.13",
     "bootstrap": "^3.3.6"
   }
 }

@@ -1,27 +1,29 @@
 var width = window.innerWidth,
-    height = window.innerHeight,
-    color = d3.scale.category20();
-
-var bubble = d3.layout.pack()
-    .sort(null)
-    .size([width, height])
-    .padding(1.5);
+    height = window.innerHeight;
 
 var svg = d3.select("#map")
     .append("svg")
     .attr("class", "view")
     .attr("width", width)
     .attr("height", height)
-    .call(d3.behavior.zoom().scaleExtent([1, 8]).on("zoom", zoom))
+    .call(d3.zoom().scaleExtent([1, 8]).on("zoom", zoom))
     .append("g");
 
-
 function addIssues(issues) {
-    var root = splitToSubsystems(issues);
-    var nodes = bubble.nodes(root);
+    var issuesWithSubsystems = splitToSubsystems(issues);
+
+    var root = d3.hierarchy(issuesWithSubsystems)
+        .sum(function (d) {
+            return 20;
+        });
+
+    var bubble = d3.pack()
+        .size([width, height]);
+
+    bubble(root);
 
     var groupNode = svg.selectAll(".group")
-        .data(nodes.filter(function (d) {
+        .data(root.descendants().filter(function (d) {
             return d !== root && d.children;
         }))
         .enter().append("g")
@@ -39,7 +41,7 @@ function addIssues(issues) {
     groupNode
         .append("title")
         .text(function (d) {
-            return "" + d.groups;
+            return "" + d.data.groups;
         });
 
     // groupNode
@@ -56,21 +58,21 @@ function addIssues(issues) {
     //     });
 
     var node = svg.selectAll(".issue")
-        .data(nodes.filter(function (d) {
-            return !d.children;
-        }))
+        .data(root.leaves())
         .enter().append("g")
         .attr("class", "issue")
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
         })
         .on('click', function (d, i) {
-            window.open(d.url, '_blank');
+            window.open(d.data.url, '_blank');
         });
 
     node.append("title")
         .text(function (d) {
-            return d.id + ": " + d.summary + ": " + d.priority + ": " + d.state + ": " + d.subsystems + " " + d.assignee;
+            var data = d.data;
+            return data.id + ": " + data.summary + ": " + data.priority + ": " +
+                data.state + ": " + data.subsystems + " " + data.assignee;
         });
 
     node.append("circle")
@@ -78,7 +80,7 @@ function addIssues(issues) {
             return d.r;
         })
         .style("fill", function (d) {
-            var priority = d.priority;
+            var priority = d.data.priority;
             if (priority === "Minor") {
                 return "lightgreen"
             } else if (priority === "Normal") {
@@ -92,28 +94,28 @@ function addIssues(issues) {
             return "gray"
         })
     ;
-    // node.append("image")
-    //     .attr("xlink:href", "../img/trees.png")
-    //     .attr("x", function (d) {
-    //         return -d.r
-    //     })
-    //     .attr("y", function (d) {
-    //         return -d.r;
-    //     })
-    //     .attr("width", function (d) {
-    //         return d.r * 2;
-    //     })
-    //     .attr("height", function (d) {
-    //         return d.r * 2;
-    //     });
-    
+    // // node.append("image")
+    // //     .attr("xlink:href", "../img/trees.png")
+    // //     .attr("x", function (d) {
+    // //         return -d.r
+    // //     })
+    // //     .attr("y", function (d) {
+    // //         return -d.r;
+    // //     })
+    // //     .attr("width", function (d) {
+    // //         return d.r * 2;
+    // //     })
+    // //     .attr("height", function (d) {
+    // //         return d.r * 2;
+    // //     });
+    //
     var MILISECONDS_IN_YEAR = 31536000000;
     var today = Date.now();
 
     for (var i = 1; i <= 5; i++) {
         var numberOfYears = i;
 
-        node.filter(function (d) { return Math.abs(d.created - today) > (numberOfYears * MILISECONDS_IN_YEAR); })
+        node.filter(function (d) { return Math.abs(d.data.created - today) > (numberOfYears * MILISECONDS_IN_YEAR); })
             .append("circle")
             .attr("r", function (d) {
                 return d.r / 6 * (6 - numberOfYears);
@@ -121,7 +123,7 @@ function addIssues(issues) {
             .attr("class", "year_circle")
     }
 
-    node.filter(function (d) { return d.votes > 0; })
+    node.filter(function (d) { return d.data.votes > 0; })
         .append('text')
         .attr('font-family', 'FontAwesome')
         .attr('font-size', function (d) {
@@ -131,8 +133,6 @@ function addIssues(issues) {
         .attr('y', function (d) { return 3; })
         .text(function(d) { return '\uf087'; });
 }
-
-d3.select(self.frameElement).style("height", height + "px");
 
 function splitToSubsystems(issues) {
     var subsystemNodes = {};
@@ -160,5 +160,6 @@ function splitToSubsystems(issues) {
 }
 
 function zoom() {
-    svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    var event = d3.event;
+    svg.attr("transform", event.transform);
 }
