@@ -30,11 +30,11 @@ function fileName() {
         }
     }
 
-    return "kt-all.json";
+    return "kt-compiler.json";
 }
 
 function updateFilter() {
-    var name = "All";
+    var name = "Compiler";
     var query = getParam("q");
     if (query) {
         if (query === "compiler") {

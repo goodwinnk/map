@@ -135,6 +135,7 @@ fun ktCompress(issue: IssueOverview): IssueOverviewCompressed {
         "Major" -> "m"
         "Normal" -> "n"
         "Minor" -> "mi"
+        "No Priority" -> "np"
         "undefined" -> "u"
         else -> "o"
     }

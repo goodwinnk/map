@@ -193,6 +193,7 @@ var encodedPriority = {
     "m": "Major",
     "n": "Normal",
     "mi": "Minor",
+    "np": "No Priority",
     "u": "undefined"
 };
 
