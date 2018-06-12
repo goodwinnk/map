@@ -47,10 +47,7 @@ private val requests = listOf(
                         "Subsystems: -{Language design} " +
                         "Subsystems: -{IDE*} " +
                         "Subsystems: -{Tools*}"
-        )
-)
-
-private val requests_tests = listOf(
+        ),
         IssuesRequest(
                 "kt-docs",
                 "Project: KT #Unresolved Subsystems: Docs"
@@ -60,7 +57,7 @@ private val requests_tests = listOf(
 private const val NUMBER_PER_REQUEST = 1000
 
 fun main(args: Array<String>) {
-    for (request in requests_tests) {
+    for (request in requests) {
         processRequest(request)
     }
 }
@@ -81,7 +78,7 @@ fun processRequest(request: IssuesRequest) {
 
     println("Expected for ${request.name}: $number")
 
-    val all = LinkedHashSet<IssueOverview>()
+    val all = LinkedHashSet<IssueOverviewCompressed>()
     while (all.size < number) {
         val issuesRequest = URIBuilder(youTrack("/rest/issue")).apply {
             addParameter("filter", request.filter)
@@ -92,7 +89,11 @@ fun processRequest(request: IssuesRequest) {
         val jsonResult = httpJson(issuesRequest)
 
         @Suppress("UNCHECKED_CAST")
-        val issues = (jsonResult.parseJson() as JsonObject).array<JsonObject>("issue")!!.map { toIssueOverview(it) }
+        val issues = (jsonResult.parseJson() as JsonObject)
+                .array<JsonObject>("issue")!!
+                .map {
+                    ktCompress(toIssueOverview(it))
+                }
 
         all.addAll(issues)
 
@@ -126,6 +127,48 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     val subsystems = fieldsMap["Subsystems"]?.array<String>("value")?.toTypedArray() ?: arrayOf()
 
     return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
+}
+
+fun ktCompress(issue: IssueOverview): IssueOverviewCompressed {
+    val priority = when (issue.priority) {
+        "Critical" -> "c"
+        "Major" -> "m"
+        "Normal" -> "n"
+        "Minor" -> "mi"
+        "undefined" -> "u"
+        else -> "o"
+    }
+
+    val state = when (issue.state) {
+        "Open" -> "Op"
+        "Submitted" -> "Sub"
+        "Wait for Reply" -> "WFR"
+        "Investigating" -> "Inv"
+        "Reproduction" -> "Rep"
+        "To be discussed" -> "TBD"
+        "Spec Needed" -> "Spec"
+        "In Progress" -> "InPr"
+        "Can't Reproduce" -> "CNR"
+        "Duplicate" -> "Dup"
+        "Fixed" -> "F"
+        "As Designed" -> "AsD"
+        "Obsolete" -> "Ob"
+        "Planned" -> "Plan"
+        "To be considered" -> "TBC"
+        "Declined" -> "Dec"
+        else -> throw IllegalArgumentException("Unknown state value: ${issue.state}")
+    }
+
+    return IssueOverviewCompressed(
+            issue.id,
+            issue.summary,
+            priority,
+            state,
+            issue.created,
+            issue.votes,
+            issue.assignee,
+            issue.subsystems
+    )
 }
 
 fun String.parseJson(): Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!

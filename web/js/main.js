@@ -65,14 +65,15 @@ function addIssues(issues) {
             return "translate(" + d.x + "," + d.y + ")";
         })
         .on('click', function (d, i) {
-            window.open(d.data.url, '_blank');
+            window.open("https://youtrack.jetbrains.com/issue/" + d.data.id, '_blank');
         });
 
     node.append("title")
         .text(function (d) {
             var data = d.data;
-            return data.id + ": " + data.summary + ": " + data.priority + ": " +
-                data.state + ": " + data.subsystems + " " + data.assignee;
+            return data.id + ": " + data.s + ": " +
+                decodePriority(data.p) + ": " +
+                decodeState(data.st) + ": " + data.ss + " " + data.a;
         });
 
     node.append("polygon")
@@ -80,7 +81,7 @@ function addIssues(issues) {
             return hexagon(d.r);
         })
         .style("fill", function (d) {
-            var priority = d.data.priority;
+            var priority = decodePriority(d.data.p);
             if (priority === "Minor") {
                 return "lightgreen"
             } else if (priority === "Normal") {
@@ -121,7 +122,7 @@ function addIssues(issues) {
 
         node
             .filter(function (d) {
-                return Math.abs(d.data.created - today) > (numberOfYears * MILISECONDS_IN_YEAR);
+                return Math.abs(d.data.c - today) > (numberOfYears * MILISECONDS_IN_YEAR);
             })
             .append("circle")
             .attr("r", function (d) {
@@ -134,7 +135,7 @@ function addIssues(issues) {
         ;
     }
 
-    // node.filter(function (d) { return d.data.votes > 0; })
+    // node.filter(function (d) { return d.data.v > 0; })
     //     .append('text')
     //     .attr('font-family', 'FontAwesome')
     //     .attr('font-size', function (d) {
@@ -151,7 +152,7 @@ function splitToSubsystems(issues) {
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
 
-        var subsystem = issue.subsystems;
+        var subsystem = issue.ss;
         var node = subsystemNodes[subsystem];
 
         if (typeof node === "undefined") {
@@ -185,4 +186,41 @@ function hexagon(r) {
         0 + "," + a2 + " " +
         (-r) + "," + a + " " +
         (-r) + "," + (-a);
+}
+
+var encodedPriority = {
+    "c": "Critical",
+    "m": "Major",
+    "n": "Normal",
+    "mi": "Minor",
+    "u": "undefined"
+};
+
+function decodePriority(priority) {
+    var dPriority = encodedPriority[priority];
+    return dPriority ? dPriority : priority;
+}
+
+var encodedState = {
+    "Op": "Open",
+    "Sub": "Submitted",
+    "WFR": "Wait for Reply",
+    "Inv": "Investigating",
+    "Rep": "Reproduction",
+    "TBD": "To be discussed",
+    "Spec": "Spec Needed",
+    "InPr": "In Progress",
+    "CNR": "Can't Reproduce",
+    "Dup": "Duplicate",
+    "F": "Fixed",
+    "AsD": "As Designed",
+    "Ob": "Obsolete",
+    "Plan": "Planned",
+    "TBC": "To be considered",
+    "Dec": "Declined"
+};
+
+function decodeState(state) {
+    var dState = encodedState[state];
+    return dState ? dState : state
 }

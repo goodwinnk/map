@@ -22,3 +22,25 @@ class IssueOverview(
         return id == other.id
     }
 }
+
+class IssueOverviewCompressed(
+        val id: String,
+        val s: String, /* summary */
+        val p: String?, /* priority */
+        val st: String, /* state */
+        val c: Long, /* created */
+        val v: Int, /* votes */
+        val a: String?,  /* assignee */
+        val ss: Array<String> /* subsystems */
+) {
+    override fun hashCode(): Int = id.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as IssueOverviewCompressed
+
+        return id == other.id
+    }
+}
