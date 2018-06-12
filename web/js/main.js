@@ -75,9 +75,9 @@ function addIssues(issues) {
                 data.state + ": " + data.subsystems + " " + data.assignee;
         });
 
-    node.append("circle")
-        .attr("r", function (d) {
-            return d.r;
+    node.append("polygon")
+        .attr("points", function (d) {
+            return hexagon(d.r);
         })
         .style("fill", function (d) {
             var priority = d.data.priority;
@@ -92,6 +92,10 @@ function addIssues(issues) {
             }
 
             return "gray"
+        })
+        .style("stroke", "lightgray")
+        .style("stroke-width", function (d) {
+            return 1 * d.r / 20;
         })
     ;
     // // node.append("image")
@@ -115,23 +119,30 @@ function addIssues(issues) {
     for (var i = 1; i <= 5; i++) {
         var numberOfYears = i;
 
-        node.filter(function (d) { return Math.abs(d.data.created - today) > (numberOfYears * MILISECONDS_IN_YEAR); })
+        node
+            .filter(function (d) {
+                return Math.abs(d.data.created - today) > (numberOfYears * MILISECONDS_IN_YEAR);
+            })
             .append("circle")
             .attr("r", function (d) {
                 return d.r / 6 * (6 - numberOfYears);
             })
             .attr("class", "year_circle")
+            .style("stroke-width", function (d) {
+                return 1 * d.r / 20;
+            })
+        ;
     }
 
-    node.filter(function (d) { return d.data.votes > 0; })
-        .append('text')
-        .attr('font-family', 'FontAwesome')
-        .attr('font-size', function (d) {
-            return "0." + Math.floor(d.votes / 5) + "em";
-        })
-        .attr('x', function (d) { return -3; })
-        .attr('y', function (d) { return 3; })
-        .text(function(d) { return '\uf087'; });
+    // node.filter(function (d) { return d.data.votes > 0; })
+    //     .append('text')
+    //     .attr('font-family', 'FontAwesome')
+    //     .attr('font-size', function (d) {
+    //         return "0." + Math.floor(d.votes / 5) + "em";
+    //     })
+    //     .attr('x', function (d) { return -3; })
+    //     .attr('y', function (d) { return 3; })
+    //     .text(function(d) { return '\uf087'; });
 }
 
 function splitToSubsystems(issues) {
@@ -162,4 +173,16 @@ function splitToSubsystems(issues) {
 function zoom() {
     var event = d3.event;
     svg.attr("transform", event.transform);
+}
+
+function hexagon(r) {
+    var a2 = r / Math.cos(Math.PI / 6);
+    var a = a2 / 2;
+    return "" +
+        0 + "," + (-a2) + " " +
+        r + "," + (-a) + " " +
+        r + "," + a + " " +
+        0 + "," + a2 + " " +
+        (-r) + "," + a + " " +
+        (-r) + "," + (-a);
 }
