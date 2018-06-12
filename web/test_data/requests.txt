@@ -1,5 +1,0 @@
-http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/IDEA\?max\=100000\&filter\=%23Unresolved > idea_all.json
-http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/IDEA\?max\=1\&filter\=%23Unresolved > idea_1.json
-http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/KT\?max\=100000\&filter\=%23Unresolved%20created:2014-01%20..%202017-12 > kt_a2014.json
-http --json GET https://youtrack.jetbrains.com/rest/issue/byproject/KT\?max\=100000\&filter\=%23Unresolved > kt_a2014.json
-http --json GET https://youtrack.jetbrains.com/rest/issue/count\?filter\=%23Unresolved%20project%3AKT

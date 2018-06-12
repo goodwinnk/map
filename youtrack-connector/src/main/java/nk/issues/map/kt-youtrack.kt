@@ -103,7 +103,7 @@ fun processRequest(request: IssuesRequest) {
         Thread.sleep(100)
     }
 
-    val output = File("web/test_data/${request.fileName}")
+    val output = File("web/data/${request.fileName}")
     output.createNewFile()
     output.writeText(Gson().toJson(all.toTypedArray()))
 }
