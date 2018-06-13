@@ -37,7 +37,9 @@ function updateFilter() {
     var name = "Compiler";
     var query = getParam("q");
     if (query) {
-        if (query === "compiler") {
+        if (query === "all") {
+            name = "All";
+        } else if (query === "compiler") {
             name = "Compiler";
         } else if (query === "ide") {
             name = "IDE";
@@ -46,7 +48,7 @@ function updateFilter() {
         } else if (query === "other") {
             name = "Other";
         } else if (query === "docs") {
-            name = "Docs"
+            name = "Docs";
         }
     }
 
