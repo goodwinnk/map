@@ -18,7 +18,20 @@ function addIssues(issues) {
         });
 
     var bubble = d3.pack()
-        .size([width, height]);
+        .size([width, height])
+        .padding(function (d) {
+            if (d === root) {
+                var firstGroupNode = root.children[0];
+                if (firstGroupNode) {
+                    var firstLeaf = firstGroupNode.children[0];
+                    if (firstLeaf) {
+                        return 20 * 2;
+                    }
+                }
+            }
+
+            return 0;
+        });
 
     bubble(root);
 
@@ -35,7 +48,9 @@ function addIssues(issues) {
     groupNode
         .append("circle")
         .attr("r", function (d) {
-            return d.r;
+            var firstLeaf = d.children[0];
+            var delta = firstLeaf ? firstLeaf.r / 2 : 0;
+            return d.r + 5;
         });
 
     groupNode
