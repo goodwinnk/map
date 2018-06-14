@@ -73,7 +73,13 @@ function addIssues(issues) {
     //     });
 
     var node = svg.selectAll(".issue")
-        .data(root.leaves())
+        .data(root.leaves().sort(function (a, b) {
+            var dy = a.y - b.y;
+            if (dy !== 0) {
+                return dy
+            }
+            return -(a.x - b.x);
+        }))
         .enter().append("g")
         .attr("class", "issue")
         .attr("transform", function (d) {
@@ -111,7 +117,7 @@ function addIssues(issues) {
         })
         .style("stroke", "lightgray")
         .style("stroke-width", function (d) {
-            return 1 * d.r / 20;
+            return d.r / 20;
         })
     ;
     // // node.append("image")
