@@ -8,8 +8,33 @@
     fill: #ffd288;
 }
 
+.unknown_priority {
+    fill: gray;
+    stroke: lightgray;
+}
+
+.minor_priority {
+    fill: lightgreen;
+    stroke: lightgray;
+}
+
+.normal_priority {
+    fill: forestgreen;
+    stroke: lightgray;
+}
+
+.major_priority {
+    fill: orange;
+    stroke: lightgray;
+}
+
+.critical_priority {
+    fill: deeppink;
+    stroke: lightgray;
+}
+
 .year_circle {
-    stroke-width: 1px;
+    stroke-width: 0.5px;
     stroke: Red;
     fill: none;
 }
