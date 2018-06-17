@@ -3,6 +3,10 @@ var RADIUS = SIZE / 2 * Math.sqrt(2);
 var MILISECONDS_IN_YEAR = 31536000000;
 var HEXAGON_POINTS = hexagon(RADIUS);
 
+var VOTE_BASE_SIZE = 5;
+var VOTE_MAX = 100;
+var VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
+
 var width = window.innerWidth,
     height = window.innerHeight;
 
@@ -171,10 +175,14 @@ function addIssues(issues) {
         .append('text')
         .attr('font-family', 'FontAwesome')
         .attr('font-size', function (d) {
-            return "" + Math.ceil(Math.max(d.data.v, 50) / 50 * d.r) + "px";
+            return "" + Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) + "px";
         })
-        // .attr('x', function (d) { return -3; })
-        // .attr('y', function (d) { return 3; })
+        .attr('x', function (d) {
+            return -Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) / 2;
+        })
+        .attr('y', function (d) {
+            return Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) / 2;
+        })
         .text('\uf087');
 
     // groupNode
