@@ -5,32 +5,38 @@
 }
 
 .group circle {
-    fill: #ffd288;
+    fill: #efefef;
 }
 
 .unknown_priority {
-    fill: gray;
-    stroke: lightgray;
+    fill: #7e7d7e;
+    stroke: white;
 }
 
 .minor_priority {
-    fill: lightgreen;
-    stroke: lightgray;
+    fill: #13dded;
+    stroke: white;
 }
 
 .normal_priority {
-    fill: forestgreen;
-    stroke: lightgray;
+    fill: #396beb;
+    stroke: white;
 }
 
 .major_priority {
-    fill: orange;
-    stroke: lightgray;
+    fill: #ff7504;
+    stroke: white;
 }
 
 .critical_priority {
-    fill: deeppink;
-    stroke: lightgray;
+    fill: #E30000;
+    stroke: white;
+}
+
+.critical_year_circle {
+    stroke-width: 0.5px;
+    stroke: white;
+    fill: none;
 }
 
 .year_circle {

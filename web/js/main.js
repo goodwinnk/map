@@ -145,16 +145,22 @@ function addIssues(issues) {
     var today = Date.now();
     for (var i = 1; i <= 5; i++) {
         var numberOfYears = i;
+        var yearRadius = RADIUS / 6 * (6 - numberOfYears);
 
         node
             .filter(function (d) {
                 return Math.abs(d.data.c - today) > (numberOfYears * MILISECONDS_IN_YEAR);
             })
             .append("circle")
-            .attr("r", function (d) {
-                return d.r / 6 * (6 - numberOfYears);
+            .attr("r", yearRadius)
+            .attr("class", function (d) {
+                var priority = decodePriority(d.data.p);
+                if (priority === "Critical") {
+                    return "critical_year_circle";
+                }
+
+                return "year_circle";
             })
-            .attr("class", "year_circle")
         ;
     }
 
