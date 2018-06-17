@@ -193,6 +193,11 @@ function addIssues(issues) {
     //     .style("text-anchor", "middle")
     // ;
 
+    if (scale >= 1) {
+        zoom.scaleExtent([1, 2]);
+    } else {
+        zoom.scaleExtent([scale, 2]);
+    }
     var t = d3.zoomIdentity.scale(scale);
     zoom.transform(svg, t);
 }
