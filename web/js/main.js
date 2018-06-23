@@ -89,7 +89,8 @@ function addIssues(issues) {
             }
             return -(a.x - b.x);
         }))
-        .enter().append("g")
+        .enter()
+        .append("g")
         .attr("class", "issue")
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";

@@ -1,3 +1,5 @@
+var DATES = ["20.06.2018", "13.06.2018"];
+
 var queryDict = null;
 
 function getParam(paramName) {
@@ -10,6 +12,26 @@ function getParam(paramName) {
     }
 
     return queryDict[paramName]
+}
+
+function getDate() {
+    var date = getParam("d");
+    if (date) {
+        if (DATES.includes(date)) {
+            return date;
+        }
+    }
+
+    return DATES[0];
+}
+
+/**
+ * @param dateStr date string in dd.MM.YYYY format
+ * @return date string in YYYY.MM.dd format
+ */
+function dateDir(dateStr) {
+    var parts = dateStr.split('.');
+    return parts[2] + "." + parts[1] + "." + parts[0];
 }
 
 function fileName() {
@@ -55,15 +77,37 @@ function updateFilter() {
     document.getElementById("filter_selection").innerText = name;
 }
 
+function updateDate() {
+    var list = document.getElementById("date_dropdown_menu");
+    for(var i = 0; i < DATES.length; i++) {
+        var dateStr = DATES[i];
+
+        var a = document.createElement("a");
+        a.appendChild(document.createTextNode(dateStr));
+        a.href = "?d=" + dateStr;
+        a.onclick = (function(value) {
+            return function() {
+                hrefParam("d", value);
+                return false;
+            }
+        })(dateStr);
+
+        var item = document.createElement("li");
+        item.appendChild(a);
+
+        list.appendChild(item);
+    }
+
+    document.getElementById("date_selection").innerText = getDate();
+}
+
 function loadIssues() {
-    d3.json("data/" + fileName()).then(function (data) {
+    d3.json("data/" + dateDir(getDate()) + "/" + fileName()).then(function (data) {
         var title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            var result = "";
             var adapted = data.map(adapt);
-
             addIssues(adapted);
         }
     });
@@ -82,4 +126,25 @@ function adapt(issue) {
 
 function yt(suffix) {
     return "http://localhost/test/" + suffix;
+}
+
+function hrefParam(key, value) {
+    key = encodeURI(key);
+    value = encodeURI(value);
+
+    var paramsArray = document.location.search.substr(1).split('&');
+
+    var index = paramsArray.length;
+    for (var i = 0; i < paramsArray.length; i++) {
+        var x = paramsArray[i].split('=');
+        if (x[0] === key) {
+            index = i;
+            break;
+        }
+    }
+
+    paramsArray[index] = [key, value].join('=');
+
+    //this will reload the page, it's likely better to store this until finished
+    document.location.search = paramsArray.join('&');
 }

@@ -9,6 +9,7 @@ import org.apache.http.util.EntityUtils
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
+import java.text.SimpleDateFormat
 
 data class IssuesRequest(
         val name: String,
@@ -57,12 +58,17 @@ private val requests = listOf(
 private const val NUMBER_PER_REQUEST = 1000
 
 fun main(args: Array<String>) {
+    val today = Date()
+    val dirName = SimpleDateFormat("yyyy.MM.dd").format(today)
+    val dir = File("web/data/$dirName")
+    dir.mkdir()
+
     for (request in requests) {
-        processRequest(request)
+        processRequest(request, dir)
     }
 }
 
-fun processRequest(request: IssuesRequest) {
+fun processRequest(request: IssuesRequest, dir: File) {
     var numberPerRequest = NUMBER_PER_REQUEST
 
     var number = -1
@@ -104,7 +110,7 @@ fun processRequest(request: IssuesRequest) {
         Thread.sleep(100)
     }
 
-    val output = File("web/data/${request.fileName}")
+    val output = File(dir, request.fileName)
     output.createNewFile()
     output.writeText(Gson().toJson(all.toTypedArray()))
 }
