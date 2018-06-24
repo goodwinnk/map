@@ -151,14 +151,16 @@ function addIssues(issues) {
         //     return "unknown_priority";
         // })
         .attr("fill", function(d) {
-            var votes = d.data.v;
-            if (!votes) {
-                votes = 0;
-            }
-
-            votes += 1;
-
-            return colorScaleRainbow(votesLogScale(votes));
+            var number = issuesWithSubsystems.developers[d.data.a];
+            return d3.schemePaired[number % 12];
+            // var votes = d.data.v;
+            // if (!votes) {
+            //     votes = 0;
+            // }
+            //
+            // votes += 1;
+            //
+            // return d3.interpolatePlasma(votesLogScale(votes));
         })
     ;
 
@@ -229,6 +231,9 @@ function addIssues(issues) {
 function splitToSubsystems(issues) {
     var subsystemNodes = {};
 
+    var developersCount = 0;
+    var developers = {};
+
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
 
@@ -243,11 +248,21 @@ function splitToSubsystems(issues) {
             subsystemNodes[subsystem] = node;
         }
 
+        if (!issue.a) {
+            issue.a = "Unassigned";
+        }
+
+        if (!developers[issue.a]) {
+            developers[issue.a] = ++developersCount;
+        }
+
         node.children.push(issue);
     }
 
     return {
-        children: d3.values(subsystemNodes)
+        children: d3.values(subsystemNodes),
+        developers: developers,
+        developersCount: developersCount
     };
 }
 
