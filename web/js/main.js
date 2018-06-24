@@ -34,6 +34,9 @@ function addIssues(issues) {
         .range(coloursRainbow)
         .interpolate(d3.interpolateHcl);
 
+    var votesLogScale = d3.scaleLog()
+        .domain([1, VOTE_MAX + 1]);
+
     var issuesWithSubsystems = splitToSubsystems(issues);
 
     var root = d3.hierarchy(issuesWithSubsystems)
@@ -153,11 +156,9 @@ function addIssues(issues) {
                 votes = 0;
             }
 
-            if (votes > 0) {
-                votes += 30
-            }
+            votes += 1;
 
-            return colorScaleRainbow(Math.min(votes, VOTE_MAX) / VOTE_MAX);
+            return colorScaleRainbow(votesLogScale(votes));
         })
     ;
 
