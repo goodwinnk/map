@@ -4,7 +4,7 @@ var MILISECONDS_IN_YEAR = 31536000000;
 var HEXAGON_POINTS = hexagon(RADIUS);
 
 var VOTE_BASE_SIZE = 5;
-var VOTE_MAX = 100;
+var VOTE_MAX = 200;
 var VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
 
 var width = window.innerWidth,
@@ -24,9 +24,23 @@ var svg = d3.select("#map")
 var mainG = svg.append("g");
 
 function addIssues(issues) {
+    var coloursRainbow = ["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c","#f9d057","#f29e2e","#e76818","#d7191c"];
+    var colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
+    colourRangeRainbow.push(1);
+
+//Create color gradient
+    var colorScaleRainbow = d3.scaleLinear()
+        .domain(colourRangeRainbow)
+        .range(coloursRainbow)
+        .interpolate(d3.interpolateHcl);
+
     var issuesWithSubsystems = splitToSubsystems(issues);
 
-    var root = d3.hierarchy(issuesWithSubsystems).count();
+    var root = d3.hierarchy(issuesWithSubsystems)
+        .sort(function (a, b) {
+            return b.data.v - a.data.v;
+        })
+        .count();
 
     var bubble = d3.pack()
         .size([width, height])
@@ -81,6 +95,16 @@ function addIssues(issues) {
             return "" + d.data.groups;
         });
 
+    groupNode
+        .append("text")
+        .text(function (d) {
+            return "" + d.data.groups
+        })
+        .attr("y", function (d) {
+            return -d.r - 10;
+        })
+        .attr("text-anchor", "middle");
+
     var node = mainG.selectAll(".issue")
         .data(root.leaves().sort(function (a, b) {
             var dy = a.y - b.y;
@@ -109,43 +133,33 @@ function addIssues(issues) {
 
     node.append("polygon")
         .attr("points", HEXAGON_POINTS)
-        .attr("class", function (d) {
-            var priority = decodePriority(d.data.p);
-            if (priority === "Minor") {
-                return "minor_priority";
-            } else if (priority === "Normal") {
-                return "normal_priority";
-            } else if (priority === "Major") {
-                return "major_priority";
-            } else if (priority === "Critical") {
-                return "critical_priority";
+        // .attr("class", function (d) {
+        //     var priority = decodePriority(d.data.p);
+        //     if (priority === "Minor") {
+        //         return "minor_priority";
+        //     } else if (priority === "Normal") {
+        //         return "normal_priority";
+        //     } else if (priority === "Major") {
+        //         return "major_priority";
+        //     } else if (priority === "Critical") {
+        //         return "critical_priority";
+        //     }
+        //
+        //     return "unknown_priority";
+        // })
+        .attr("fill", function(d) {
+            var votes = d.data.v;
+            if (!votes) {
+                votes = 0;
             }
 
-            return "unknown_priority";
+            if (votes > 0) {
+                votes += 30
+            }
+
+            return colorScaleRainbow(Math.min(votes, VOTE_MAX) / VOTE_MAX);
         })
     ;
-
-    // node
-    //     .append("image")
-    //     .attr("xlink:href", function (d) {
-    //         var priority = decodePriority(d.data.p);
-    //         if (priority === "Minor") {
-    //             return "../img/bushes.png"
-    //         } else if (priority === "Normal") {
-    //             return "../img/trees.png";
-    //         } else if (priority === "Major") {
-    //             return "../img/dunes.png";
-    //         } else if (priority === "Critical") {
-    //             return "../img/vulcano.png"
-    //         }
-    //
-    //         return "../img/rocs.png"
-    //
-    //     })
-    //     .attr("x", -(SIZE / 2))
-    //     .attr("y", -(SIZE / 2))
-    //     .attr("width", SIZE)
-    //     .attr("height", SIZE);
 
     var today = Date.now();
     for (var i = 1; i <= 5; i++) {
@@ -174,21 +188,33 @@ function addIssues(issues) {
             return d.data.v > 0;
         })
         .append('text')
-        .attr('font-family', 'FontAwesome')
+        .attr('font-family', 'Arial')
         .attr('font-size', function (d) {
             return "" + Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) + "px";
         })
         .attr("text-anchor", "middle")
         .attr("dominant-baseline", "central")
-        .text('\uf087');
+        .text(function (d) {
+            return d.data.v;
+        });
 
-    // groupNode
-    //     .append("text")
-    //     .text(function (d) {
-    //         return "" + d.groups;
-    //     })
-    //     .style("text-anchor", "middle")
-    // ;
+    var groupLabels = mainG.selectAll(".groups-label")
+        .data(root.descendants().filter(function (d) {
+            return d !== root && d.children;
+        }))
+        .enter().append("g")
+        .attr("transform", function (d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        })
+        .append("text")
+        .attr("class", "group-label")
+        .text(function (d) {
+            return "" + d.data.groups
+        })
+        .attr("y", function (d) {
+            return -d.r - 10;
+        })
+        .attr("text-anchor", "middle");
 
     if (scale >= 1) {
         zoom.scaleExtent([1, 2]);

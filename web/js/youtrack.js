@@ -145,6 +145,5 @@ function hrefParam(key, value) {
 
     paramsArray[index] = [key, value].join('=');
 
-    //this will reload the page, it's likely better to store this until finished
     document.location.search = paramsArray.join('&');
 }
