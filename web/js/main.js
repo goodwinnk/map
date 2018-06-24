@@ -178,12 +178,8 @@ function addIssues(issues) {
         .attr('font-size', function (d) {
             return "" + Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) + "px";
         })
-        .attr('x', function (d) {
-            return -Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) / 2;
-        })
-        .attr('y', function (d) {
-            return Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) / 2;
-        })
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
         .text('\uf087');
 
     // groupNode
