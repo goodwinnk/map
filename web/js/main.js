@@ -41,7 +41,7 @@ function addIssues(issues) {
 
     var root = d3.hierarchy(issuesWithSubsystems)
         .sort(function (a, b) {
-            return b.data.v - a.data.v;
+            return issuesWithSubsystems.developers[a.data.a] - issuesWithSubsystems.developers[b.data.a];
         })
         .count();
 
@@ -191,7 +191,7 @@ function addIssues(issues) {
             return d.data.v > 0;
         })
         .append('text')
-        .attr('font-family', 'Arial')
+        .attr("class", "vote_text")
         .attr('font-size', function (d) {
             return "" + Math.ceil(VOTE_BASE_SIZE + Math.min(d.data.v, VOTE_MAX) * VOTE_FACTOR) + "px";
         })
@@ -231,21 +231,26 @@ function addIssues(issues) {
 function splitToSubsystems(issues) {
     var subsystemNodes = {};
 
-    var developersCount = 0;
-    var developers = {};
+    var developersCount = 1;
+    var developers = {"Unassigned":"1"};
 
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
 
-        var subsystem = issue.ss;
-        var node = subsystemNodes[subsystem];
+        var subsystems = issue.ss;
+        for (var s = 0; s < subsystems.length; s++) {
+            var subsystem = subsystems[s];
+            var subsystemNode = subsystemNodes[subsystem];
 
-        if (typeof node === "undefined") {
-            node = {
-                children: [],
-                groups: subsystem
-            };
-            subsystemNodes[subsystem] = node;
+            if (typeof subsystemNode === "undefined") {
+                subsystemNode = {
+                    children: [],
+                    groups: subsystem
+                };
+                subsystemNodes[subsystem] = subsystemNode;
+            }
+
+            subsystemNode.children.push(issue);
         }
 
         if (!issue.a) {
@@ -255,8 +260,6 @@ function splitToSubsystems(issues) {
         if (!developers[issue.a]) {
             developers[issue.a] = ++developersCount;
         }
-
-        node.children.push(issue);
     }
 
     return {
