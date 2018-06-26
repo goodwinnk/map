@@ -192,7 +192,7 @@ function addIssues(issues) {
         .append("text")
         .attr("class", "group-label")
         .text(function (d) {
-            return "" + d.data.groups + " (" + d.children.length + ")";
+            return d.children.length <= 5 ? "" + d.data.groups : "" + d.data.groups + " (" + d.children.length + ")";
         })
         .attr("y", function (d) {
             return -d.r - 10;
