@@ -28,7 +28,6 @@ function addIssues(issues) {
     var colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
     colourRangeRainbow.push(1);
 
-//Create color gradient
     var colorScaleRainbow = d3.scaleLinear()
         .domain(colourRangeRainbow)
         .range(coloursRainbow)
@@ -41,7 +40,18 @@ function addIssues(issues) {
 
     var root = d3.hierarchy(issuesWithSubsystems)
         .sort(function (a, b) {
-            return issuesWithSubsystems.developers[a.data.a] - issuesWithSubsystems.developers[b.data.a];
+            var aIsChild = a.data.groups === undefined;
+            var bIsChild = b.data.groups === undefined;
+
+            if (aIsChild && bIsChild) {
+                if (b.data.v !== a.data.v) {
+                    return b.data.v - a.data.v;
+                }
+
+                return a.data.c - b.data.c;
+            }
+
+            return 0;
         })
         .count();
 
@@ -87,8 +97,6 @@ function addIssues(issues) {
     groupNode
         .append("circle")
         .attr("r", function (d) {
-            // var firstLeaf = d.children[0];
-            // var delta = firstLeaf ? firstLeaf.r / 2 : 0;
             return d.r;
         });
 
@@ -97,16 +105,6 @@ function addIssues(issues) {
         .text(function (d) {
             return "" + d.data.groups;
         });
-
-    groupNode
-        .append("text")
-        .text(function (d) {
-            return "" + d.data.groups
-        })
-        .attr("y", function (d) {
-            return -d.r - 10;
-        })
-        .attr("text-anchor", "middle");
 
     var node = mainG.selectAll(".issue")
         .data(root.leaves().sort(function (a, b) {
@@ -136,31 +134,16 @@ function addIssues(issues) {
 
     node.append("polygon")
         .attr("points", HEXAGON_POINTS)
-        // .attr("class", function (d) {
-        //     var priority = decodePriority(d.data.p);
-        //     if (priority === "Minor") {
-        //         return "minor_priority";
-        //     } else if (priority === "Normal") {
-        //         return "normal_priority";
-        //     } else if (priority === "Major") {
-        //         return "major_priority";
-        //     } else if (priority === "Critical") {
-        //         return "critical_priority";
-        //     }
-        //
-        //     return "unknown_priority";
-        // })
         .attr("fill", function(d) {
             var number = issuesWithSubsystems.developers[d.data.a];
-            return d3.schemePaired[number % 12];
-            // var votes = d.data.v;
-            // if (!votes) {
-            //     votes = 0;
-            // }
-            //
-            // votes += 1;
-            //
-            // return d3.interpolatePlasma(votesLogScale(votes));
+            var votes = d.data.v;
+            if (!votes) {
+                votes = 0;
+            }
+
+            votes += 1;
+
+            return colorScaleRainbow(votesLogScale(votes));
         })
     ;
 
@@ -176,14 +159,11 @@ function addIssues(issues) {
             .append("circle")
             .attr("r", yearRadius)
             .attr("class", function (d) {
-                var priority = decodePriority(d.data.p);
-                if (priority === "Critical") {
-                    return "critical_year_circle";
+                if (!d.data.v) {
+                    return "unvoted_year_circle";
                 }
-
                 return "year_circle";
-            })
-        ;
+            });
     }
 
     node
@@ -212,7 +192,7 @@ function addIssues(issues) {
         .append("text")
         .attr("class", "group-label")
         .text(function (d) {
-            return "" + d.data.groups
+            return "" + d.data.groups + " (" + d.children.length + ")";
         })
         .attr("y", function (d) {
             return -d.r - 10;
@@ -323,3 +303,4 @@ function decodeState(state) {
     var dState = encodedState[state];
     return dState ? dState : state
 }
+

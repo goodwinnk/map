@@ -40,6 +40,12 @@
     fill: none;
 }
 
+.unvoted_year_circle {
+    stroke-width: 0.5px;
+    stroke: #76d1ff;
+    fill: none;
+}
+
 .vote_text {
     font-family: Arial, serif;
     stroke: none;
@@ -48,7 +54,7 @@
 
 .year_circle {
     stroke-width: 0.5px;
-    stroke: Red;
+    stroke: gray;
     fill: none;
 }
 

@@ -1,4 +1,4 @@
-var DATES = ["20.06.2018", "13.06.2018"];
+var DATES = ["26.06.2018"];
 
 var queryDict = null;
 
@@ -79,23 +79,25 @@ function updateFilter() {
 
 function updateDate() {
     var list = document.getElementById("date_dropdown_menu");
-    for(var i = 0; i < DATES.length; i++) {
-        var dateStr = DATES[i];
+    if (list) {
+        for (var i = 0; i < DATES.length; i++) {
+            var dateStr = DATES[i];
 
-        var a = document.createElement("a");
-        a.appendChild(document.createTextNode(dateStr));
-        a.href = "?d=" + dateStr;
-        a.onclick = (function(value) {
-            return function() {
-                hrefParam("d", value);
-                return false;
-            }
-        })(dateStr);
+            var a = document.createElement("a");
+            a.appendChild(document.createTextNode(dateStr));
+            a.href = "?d=" + dateStr;
+            a.onclick = (function (value) {
+                return function () {
+                    hrefParam("d", value);
+                    return false;
+                }
+            })(dateStr);
 
-        var item = document.createElement("li");
-        item.appendChild(a);
+            var item = document.createElement("li");
+            item.appendChild(a);
 
-        list.appendChild(item);
+            list.appendChild(item);
+        }
     }
 
     document.getElementById("date_selection").innerText = getDate();

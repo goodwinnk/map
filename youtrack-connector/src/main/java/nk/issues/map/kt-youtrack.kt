@@ -36,7 +36,8 @@ private val requests = listOf(
                         "Subsystems: {Backend*} or " +
                         "Subsystems: {Frontend*} or " +
                         "Subsystems: IR or " +
-                        "Subsystems: {Language design}" +
+                        "Subsystems: {Language design} " +
+                        "Subsystems: {Binary Metadata}" +
                         ")"
         ),
         IssuesRequest(
@@ -47,7 +48,8 @@ private val requests = listOf(
                         "Subsystems: -IR " +
                         "Subsystems: -{Language design} " +
                         "Subsystems: -{IDE*} " +
-                        "Subsystems: -{Tools*}"
+                        "Subsystems: -{Tools*}" +
+                        "Subsystems: -{Binary Metadata}"
         ),
         IssuesRequest(
                 "kt-docs",
