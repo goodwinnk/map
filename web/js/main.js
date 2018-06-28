@@ -24,7 +24,7 @@ var svg = d3.select("#map")
 var mainG = svg.append("g");
 
 function addIssues(issues) {
-    var coloursRainbow = ["#2c7bb6", "#00a6ca","#00ccbc","#90eb9d","#ffff8c","#f9d057","#f29e2e","#e76818","#d7191c"];
+    var coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
     var colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
     colourRangeRainbow.push(1);
 
@@ -134,7 +134,7 @@ function addIssues(issues) {
 
     node.append("polygon")
         .attr("points", HEXAGON_POINTS)
-        .attr("fill", function(d) {
+        .attr("fill", function (d) {
             var number = issuesWithSubsystems.developers[d.data.a];
             var votes = d.data.v;
             if (!votes) {
@@ -206,6 +206,13 @@ function addIssues(issues) {
     }
     var t = d3.zoomIdentity.scale(scale);
     zoom.transform(svg, t);
+
+
+    $( document ).tooltip(
+        {
+            selector: ".issue"
+        }
+    );
 }
 
 function splitToSubsystems(issues) {
