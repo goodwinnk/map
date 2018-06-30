@@ -274,6 +274,7 @@ function hexagon(r) {
 }
 
 var encodedPriority = {
+    "ss": "Show Stopper",
     "c": "Critical",
     "m": "Major",
     "n": "Normal",
@@ -303,7 +304,12 @@ var encodedState = {
     "Ob": "Obsolete",
     "Plan": "Planned",
     "TBC": "To be considered",
-    "Dec": "Declined"
+    "Dec": "Declined",
+    "RO": "Reopened",
+    "WAI": "Works As Intended",
+    "A": "Answered",
+    "TPP": "Third Party Problem",
+    "In": "Incomplete"
 };
 
 function decodeState(state) {

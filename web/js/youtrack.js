@@ -1,4 +1,4 @@
-var DATES = ["26.06.2018"];
+var DATES = ["30.06.2018"];
 
 var queryDict = null;
 
@@ -48,7 +48,9 @@ function fileName() {
         } else if (query === "other") {
             return "kt-other.json";
         } else if (query === "docs") {
-            return "kt-docs.json"
+            return "kt-docs.json";
+        } else if (query === "idea") {
+            return "idea-all.json";
         }
     }
 
@@ -71,6 +73,8 @@ function updateFilter() {
             name = "Other";
         } else if (query === "docs") {
             name = "Docs";
+        } else if (query === "idea") {
+            name = "Idea"
         }
     }
 

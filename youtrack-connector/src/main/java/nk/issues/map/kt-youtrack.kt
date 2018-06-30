@@ -19,6 +19,11 @@ data class IssuesRequest(
 
 private val requests = listOf(
         IssuesRequest(
+                "idea-all",
+                "Project: IDEA #Unresolved"
+        )
+        ,
+        IssuesRequest(
                 "kt-all",
                 "Project: KT #Unresolved"
         ),
@@ -108,6 +113,9 @@ fun processRequest(request: IssuesRequest, dir: File) {
         numberPerRequest = issues.size
 
         println("Add: ${issues.size} Left: ${number - all.size}")
+        if (issues.size == 0) {
+            break
+        }
 
         Thread.sleep(100)
     }
@@ -132,13 +140,17 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     val created = fieldsMap["created"]!!.string("value")!!.toLong()
     val votes = fieldsMap["votes"]!!.string("value")!!.toInt()
     val assignee = fieldsMap["Assignee"]?.array<JsonObject>("value")?.first()?.string("value")
-    val subsystems = fieldsMap["Subsystems"]?.array<String>("value")?.toTypedArray() ?: arrayOf()
+    val subsystems = (fieldsMap["Subsystems"] ?: fieldsMap["Subsystem"])
+            ?.array<String>("value")
+            ?.toTypedArray()
+            ?: arrayOf()
 
     return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
 }
 
 fun ktCompress(issue: IssueOverview): IssueOverviewCompressed {
     val priority = when (issue.priority) {
+        "Show-stopper" -> "ss"
         "Critical" -> "c"
         "Major" -> "m"
         "Normal" -> "n"
@@ -165,6 +177,11 @@ fun ktCompress(issue: IssueOverview): IssueOverviewCompressed {
         "Planned" -> "Plan"
         "To be considered" -> "TBC"
         "Declined" -> "Dec"
+        "Reopened" -> "RO"
+        "Works As Intended" -> "WAI"
+        "Answered" -> "A"
+        "Third Party Problem" -> "TPP"
+        "Incomplete" -> "In"
         else -> throw IllegalArgumentException("Unknown state value: ${issue.state}")
     }
 
