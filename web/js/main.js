@@ -51,6 +51,10 @@ function addIssues(issues) {
                 return a.data.c - b.data.c;
             }
 
+            if (!aIsChild && !bIsChild) {
+                return b.children.length - a.children.length;
+            }
+
             return 0;
         })
         .count();
@@ -97,7 +101,7 @@ function addIssues(issues) {
     groupNode
         .append("circle")
         .attr("r", function (d) {
-            return d.r;
+            return d.r + 3;
         });
 
     groupNode
