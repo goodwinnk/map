@@ -224,6 +224,7 @@ function IssueSelection(compressedIssues) {
     this.selectedReferenceElement = document.getElementById("selected-issue-ref");
     this.descriptionElement = document.getElementById("selected-issue-description");
     this.subsystemElement = document.getElementById("selected-issue-subsystem");
+    this.priorityElement = document.getElementById("selected-issue-priority");
     this.statusElement = document.getElementById("selected-issue-status");
     this.assigneeElement = document.getElementById("selected-issue-assignee");
 
@@ -259,6 +260,7 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     this.selectedReferenceElement.innerText = "[" + data.id + "]";
     this.selectedReferenceElement.href = "https://youtrack.jetbrains.com/issue/" + d.data.id;
     this.descriptionElement.innerText = data.s;
+    this.priorityElement.innerText = decodePriority(this.compressedIssues, data.p);
     this.subsystemElement.innerText = decodeSubsystems(this.compressedIssues, data.ss);
     this.statusElement.innerText = decodeState(this.compressedIssues, data.st);
     this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
@@ -325,11 +327,12 @@ function decodeSubsystem(compressedIssues, subsystem) {
 }
 
 function decodeAssignee(compressedIssues, assignee) {
-    var assigneeStr = compressedIssues.assignees[assignee];
-    return assigneeStr ? assigneeStr : "Unassigned";
+    if (!assignee) return "Unassigned";
+    return compressedIssues.assignees[assignee];
 }
 
 function decodePriority(compressedIssues, priority) {
+    if (!priority) return "No Priority";
     return compressedIssues.priorities[priority];
 }
 
