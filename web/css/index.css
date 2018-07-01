@@ -5,6 +5,22 @@
     stroke: white;
 }
 
+.issue_selected {
+    fill: forestgreen;
+}
+
+.selected_issue_panel {
+    margin: 10px auto 0;
+    display: none;
+    position: fixed;
+    clear: none;
+    text-align: center;
+    left: 0;
+    right: 0;
+    top: 10px;
+    width: 600px;
+}
+
 .group circle {
     fill: #efefef;
 }
@@ -35,27 +51,31 @@
 }
 
 .critical_year_circle {
+    pointer-events: none;
     stroke-width: 0.5px;
     stroke: white;
     fill: none;
 }
 
 .unvoted_year_circle {
+    pointer-events: none;
     stroke-width: 0.5px;
     stroke: #76d1ff;
     fill: none;
 }
 
-.vote_text {
-    font-family: Arial, serif;
-    stroke: none;
-    fill: black;
-}
-
 .year_circle {
+    pointer-events: none;
     stroke-width: 0.5px;
     stroke: gray;
     fill: none;
+}
+
+.vote_text {
+    pointer-events: none;
+    font-family: Arial, serif;
+    stroke: none;
+    fill: black;
 }
 
 .map {
@@ -100,3 +120,5 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+/*.issue_tooltip_templates { display: none; }*/

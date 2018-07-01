@@ -124,19 +124,18 @@ function addIssues(issues) {
         .attr("transform", function (d) {
             return "translate(" + d.x + "," + d.y + ")";
         })
-        .on('click', function (d, i) {
-            window.open("https://youtrack.jetbrains.com/issue/" + d.data.id, '_blank');
-        });
+    ;
 
     node.append("title")
         .text(function (d) {
+            var groupData = d.parent.data;
             var data = d.data;
-            return data.id + ": " + data.s + ": " +
-                decodePriority(data.p) + ": " +
-                decodeState(data.st) + ": " + data.ss + " " + data.a;
-        });
+            return groupData.groups + " - [" + data.id + "] " + data.s;
+        })
+    ;
 
     node.append("polygon")
+        .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
             var number = issuesWithSubsystems.developers[d.data.a];
@@ -148,6 +147,9 @@ function addIssues(issues) {
             votes += 1;
 
             return colorScaleRainbow(votesLogScale(votes));
+        })
+        .on("click", function(d) {
+            issueSelection.selectIssue(this, d);
         })
     ;
 
@@ -210,14 +212,54 @@ function addIssues(issues) {
     }
     var t = d3.zoomIdentity.scale(scale);
     zoom.transform(svg, t);
-
-
-    $( document ).tooltip(
-        {
-            selector: ".issue"
-        }
-    );
 }
+
+function IssueSelection() {
+    this.selectedIssuePanel = document.getElementById("selected-issue-panel");
+    this.selectedReferenceElement = document.getElementById("selected-issue-ref");
+    this.descriptionElement = document.getElementById("selected-issue-description");
+    this.subsystemElement = document.getElementById("selected-issue-subsystem");
+    this.statusElement = document.getElementById("selected-issue-status");
+    this.assigneeElement = document.getElementById("selected-issue-assignee");
+
+    this.selected = null;
+}
+
+IssueSelection.prototype.closePopup = function () {
+    if (this.selected) {
+        d3.select(this.selected).classed("issue_selected", false);
+        this.selected = null;
+        this.selectedIssuePanel.style.display = "none";
+    }
+};
+
+IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
+    var polygon = d3.select(eventReceiver);
+
+    if (this.selected) {
+        d3.select(this.selected).classed("issue_selected", false);
+    } else {
+        this.selectedIssuePanel.style.display = "block";
+    }
+
+    if (this.selected === eventReceiver) {
+        this.selected = null;
+        this.selectedIssuePanel.style.display = "none";
+    } else {
+        polygon.classed("issue_selected", true);
+        this.selected = eventReceiver;
+    }
+
+    var data = d.data;
+    this.selectedReferenceElement.innerText = "[" + data.id + "]";
+    this.selectedReferenceElement.href = "https://youtrack.jetbrains.com/issue/" + d.data.id;
+    this.descriptionElement.innerText = data.s;
+    this.subsystemElement.innerText = data.ss;
+    this.statusElement.innerText = decodeState(data.st);
+    this.assigneeElement.innerText = data.a;
+};
+
+var issueSelection = new IssueSelection();
 
 function splitToSubsystems(issues) {
     var subsystemNodes = {};

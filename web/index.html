@@ -1,12 +1,12 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="css/index.css">
-    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 </head>
-<body>
 
-<nav class="navbar navbar-default navbar-fixed-top">
+<body>
+<nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -33,6 +33,7 @@
                         <li><a href="?q=tools" onclick="hrefParam('q', 'tools'); return false;">Tools</a></li>
                         <li><a href="?q=compiler" onclick="hrefParam('q', 'compiler'); return false;">Compiler</a></li>
                         <li><a href="?q=other" onclick="hrefParam('q', 'other'); return false;">Other</a></li>
+                        <li><a href="?q=idea" onclick="hrefParam('q', 'idea'); return false;">IDEA</a></li>
                     </ul>
                 </li>
                 <li class="navbar-text">
@@ -41,43 +42,29 @@
                 <li class="navbar-text">
                     Type: Votes heat map
                 </li>
-                <!--<li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Date: <span id="date_selection"></span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" id="date_dropdown_menu">
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"
-                       role="button" aria-haspopup="true" aria-expanded="false">
-                        Type: <span id="mode_selection">Votes heat map</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu" id="mode_dropdown_menu">
-                    </ul>
-                </li>-->
             </ul>
-        </div>
-    </div>
-
-    <div id="share_popup" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>Some text in the Modal..</p>
         </div>
     </div>
 </nav>
 
-<div id="map" class="map"></div>
-
-<div id="IssueTooltipTemplate" class="issue_tooltip">
-    Issue Description
-    <div class="issue_subsystem">Subsystems: subsystems</div>
-    <div class="issue_status">Status: subsystems</div>
-    <div class="issue_assignee">Assignee: assignee</div>
+<div class="selected_issue_panel" id="selected-issue-panel">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <a id="selected-issue-ref" target="_blank"></a>
+            <span id="selected-issue-description">Select issue</span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="issueSelection.closePopup()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="panel-body">
+            <span id="selected-issue-subsystem"></span>
+            <span id="selected-issue-status"></span>
+            <span id="selected-issue-assignee"></span>
+        </div>
+    </div>
 </div>
+
+<div id="map" class="map"></div>
 
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>

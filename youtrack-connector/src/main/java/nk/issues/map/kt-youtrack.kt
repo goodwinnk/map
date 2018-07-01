@@ -21,8 +21,7 @@ private val requests = listOf(
         IssuesRequest(
                 "idea-all",
                 "Project: IDEA #Unresolved"
-        )
-        ,
+        ),
         IssuesRequest(
                 "kt-all",
                 "Project: KT #Unresolved"
