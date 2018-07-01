@@ -1,4 +1,4 @@
-var DATES = ["30.06.2018"];
+var DATES = ["02.07.2018"];
 
 var queryDict = null;
 
@@ -113,21 +113,9 @@ function loadIssues() {
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            var adapted = data.map(adapt);
-            addIssues(adapted);
+            addIssues(data);
         }
     });
-}
-
-/**
- * @param {{field:[]}} issue
- * @returns {{summary:String,Priority:String,votes:I}}
- */
-function adapt(issue) {
-    issue.value = 15;
-    issue.depth = 0;
-
-    return issue;
 }
 
 function yt(suffix) {

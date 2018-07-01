@@ -22,8 +22,11 @@ var svg = d3.select("#map")
     .call(zoom);
 
 var mainG = svg.append("g");
+var issueSelection = null;
 
-function addIssues(issues) {
+function addIssues(compressedIssues) {
+    issueSelection = new IssueSelection(compressedIssues);
+
     var coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
     var colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
     colourRangeRainbow.push(1);
@@ -36,12 +39,12 @@ function addIssues(issues) {
     var votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    var issuesWithSubsystems = splitToSubsystems(issues);
+    var issuesWithSubsystems = splitToSubsystems(compressedIssues);
 
     var root = d3.hierarchy(issuesWithSubsystems)
         .sort(function (a, b) {
-            var aIsChild = a.data.groups === undefined;
-            var bIsChild = b.data.groups === undefined;
+            var aIsChild = a.data.children === undefined;
+            var bIsChild = b.data.children === undefined;
 
             if (aIsChild && bIsChild) {
                 if (b.data.v !== a.data.v) {
@@ -107,7 +110,7 @@ function addIssues(issues) {
     groupNode
         .append("title")
         .text(function (d) {
-            return "" + d.data.groups;
+            return d.data.name;
         });
 
     var node = mainG.selectAll(".issue")
@@ -130,7 +133,7 @@ function addIssues(issues) {
         .text(function (d) {
             var groupData = d.parent.data;
             var data = d.data;
-            return groupData.groups + " - [" + data.id + "] " + data.s;
+            return groupData.name + " - [" + data.id + "] " + data.s;
         })
     ;
 
@@ -138,7 +141,6 @@ function addIssues(issues) {
         .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
-            var number = issuesWithSubsystems.developers[d.data.a];
             var votes = d.data.v;
             if (!votes) {
                 votes = 0;
@@ -148,7 +150,7 @@ function addIssues(issues) {
 
             return colorScaleRainbow(votesLogScale(votes));
         })
-        .on("click", function(d) {
+        .on("click", function (d) {
             issueSelection.selectIssue(this, d);
         })
     ;
@@ -198,7 +200,8 @@ function addIssues(issues) {
         .append("text")
         .attr("class", "group-label")
         .text(function (d) {
-            return d.children.length <= 5 ? "" + d.data.groups : "" + d.data.groups + " (" + d.children.length + ")";
+            var groupName = d.data.name;
+            return d.children.length <= 5 ? "" + groupName : "" + groupName + " (" + d.children.length + ")";
         })
         .attr("y", function (d) {
             return -d.r - 10;
@@ -214,7 +217,9 @@ function addIssues(issues) {
     zoom.transform(svg, t);
 }
 
-function IssueSelection() {
+function IssueSelection(compressedIssues) {
+    this.compressedIssues = compressedIssues;
+
     this.selectedIssuePanel = document.getElementById("selected-issue-panel");
     this.selectedReferenceElement = document.getElementById("selected-issue-ref");
     this.descriptionElement = document.getElementById("selected-issue-description");
@@ -254,18 +259,14 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     this.selectedReferenceElement.innerText = "[" + data.id + "]";
     this.selectedReferenceElement.href = "https://youtrack.jetbrains.com/issue/" + d.data.id;
     this.descriptionElement.innerText = data.s;
-    this.subsystemElement.innerText = data.ss;
-    this.statusElement.innerText = decodeState(data.st);
-    this.assigneeElement.innerText = data.a;
+    this.subsystemElement.innerText = decodeSubsystems(this.compressedIssues, data.ss);
+    this.statusElement.innerText = decodeState(this.compressedIssues, data.st);
+    this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
 };
 
-var issueSelection = new IssueSelection();
-
-function splitToSubsystems(issues) {
+function splitToSubsystems(compressedIssues) {
+    var issues = compressedIssues.issues;
     var subsystemNodes = {};
-
-    var developersCount = 1;
-    var developers = {"Unassigned":"1"};
 
     for (var i = 0; i < issues.length; i++) {
         var issue = issues[i];
@@ -278,27 +279,17 @@ function splitToSubsystems(issues) {
             if (typeof subsystemNode === "undefined") {
                 subsystemNode = {
                     children: [],
-                    groups: subsystem
+                    name: decodeSubsystem(compressedIssues, subsystem)
                 };
                 subsystemNodes[subsystem] = subsystemNode;
             }
 
             subsystemNode.children.push(issue);
         }
-
-        if (!issue.a) {
-            issue.a = "Unassigned";
-        }
-
-        if (!developers[issue.a]) {
-            developers[issue.a] = ++developersCount;
-        }
     }
 
     return {
-        children: d3.values(subsystemNodes),
-        developers: developers,
-        developersCount: developersCount
+        children: d3.values(subsystemNodes)
     };
 }
 
@@ -319,47 +310,30 @@ function hexagon(r) {
         (-r) + "," + (-a);
 }
 
-var encodedPriority = {
-    "ss": "Show Stopper",
-    "c": "Critical",
-    "m": "Major",
-    "n": "Normal",
-    "mi": "Minor",
-    "np": "No Priority",
-    "u": "undefined"
-};
-
-function decodePriority(priority) {
-    var dPriority = encodedPriority[priority];
-    return dPriority ? dPriority : priority;
+function decodeCreatedDate(compressedIssues, date) {
+    return compressedIssues.createdMin + date
 }
 
-var encodedState = {
-    "Op": "Open",
-    "Sub": "Submitted",
-    "WFR": "Wait for Reply",
-    "Inv": "Investigating",
-    "Rep": "Reproduction",
-    "TBD": "To be discussed",
-    "Spec": "Spec Needed",
-    "InPr": "In Progress",
-    "CNR": "Can't Reproduce",
-    "Dup": "Duplicate",
-    "F": "Fixed",
-    "AsD": "As Designed",
-    "Ob": "Obsolete",
-    "Plan": "Planned",
-    "TBC": "To be considered",
-    "Dec": "Declined",
-    "RO": "Reopened",
-    "WAI": "Works As Intended",
-    "A": "Answered",
-    "TPP": "Third Party Problem",
-    "In": "Incomplete"
-};
+function decodeSubsystems(compressedIssues, subsystems) {
+    return subsystems.map(function(subsystem) {
+        return decodeSubsystem(compressedIssues, subsystem)
+    });
+}
 
-function decodeState(state) {
-    var dState = encodedState[state];
-    return dState ? dState : state
+function decodeSubsystem(compressedIssues, subsystem) {
+    return compressedIssues.subsystems[subsystem];
+}
+
+function decodeAssignee(compressedIssues, assignee) {
+    var assigneeStr = compressedIssues.assignees[assignee];
+    return assigneeStr ? assigneeStr : "Unassigned";
+}
+
+function decodePriority(compressedIssues, priority) {
+    return compressedIssues.priorities[priority];
+}
+
+function decodeState(compressedIssues, state) {
+    return compressedIssues.states[state];
 }
 

@@ -90,7 +90,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
 
     println("Expected for ${request.name}: $number")
 
-    val all = LinkedHashSet<IssueOverviewCompressed>()
+    val all = LinkedHashSet<IssueOverview>()
     while (all.size < number) {
         val issuesRequest = URIBuilder(youTrack("/rest/issue")).apply {
             addParameter("filter", request.filter)
@@ -104,7 +104,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
         val issues = (jsonResult.parseJson() as JsonObject)
                 .array<JsonObject>("issue")!!
                 .map {
-                    ktCompress(toIssueOverview(it))
+                    toIssueOverview(it)
                 }
 
         all.addAll(issues)
@@ -119,9 +119,11 @@ fun processRequest(request: IssuesRequest, dir: File) {
         Thread.sleep(100)
     }
 
+    val compressedIssues = compress(all)
+
     val output = File(dir, request.fileName)
     output.createNewFile()
-    output.writeText(Gson().toJson(all.toTypedArray()))
+    output.writeText(Gson().toJson(compressedIssues))
 }
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
@@ -145,55 +147,6 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
             ?: arrayOf()
 
     return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
-}
-
-fun ktCompress(issue: IssueOverview): IssueOverviewCompressed {
-    val priority = when (issue.priority) {
-        "Show-stopper" -> "ss"
-        "Critical" -> "c"
-        "Major" -> "m"
-        "Normal" -> "n"
-        "Minor" -> "mi"
-        "No Priority" -> "np"
-        "undefined" -> "u"
-        else -> "o"
-    }
-
-    val state = when (issue.state) {
-        "Open" -> "Op"
-        "Submitted" -> "Sub"
-        "Wait for Reply" -> "WFR"
-        "Investigating" -> "Inv"
-        "Reproduction" -> "Rep"
-        "To be discussed" -> "TBD"
-        "Spec Needed" -> "Spec"
-        "In Progress" -> "InPr"
-        "Can't Reproduce" -> "CNR"
-        "Duplicate" -> "Dup"
-        "Fixed" -> "F"
-        "As Designed" -> "AsD"
-        "Obsolete" -> "Ob"
-        "Planned" -> "Plan"
-        "To be considered" -> "TBC"
-        "Declined" -> "Dec"
-        "Reopened" -> "RO"
-        "Works As Intended" -> "WAI"
-        "Answered" -> "A"
-        "Third Party Problem" -> "TPP"
-        "Incomplete" -> "In"
-        else -> throw IllegalArgumentException("Unknown state value: ${issue.state}")
-    }
-
-    return IssueOverviewCompressed(
-            issue.id,
-            issue.summary,
-            priority,
-            state,
-            issue.created,
-            issue.votes,
-            issue.assignee,
-            issue.subsystems
-    )
 }
 
 fun String.parseJson(): Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!
