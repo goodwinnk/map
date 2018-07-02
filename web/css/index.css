@@ -14,11 +14,14 @@
     display: none;
     position: fixed;
     clear: none;
-    text-align: center;
     left: 0;
     right: 0;
     top: 10px;
     width: 600px;
+}
+
+.selected_issue_panel_field {
+    margin-right: 30px;
 }
 
 .group circle {
