@@ -30,7 +30,6 @@ class CompressedIssues(
         val subsystems: Map<Int, String>,
         val states: Map<Int, String>,
         val priorities: Map<Int, String>,
-        val createdMin: Long,
         val issues: Array<IssueOverviewMappedCompressed>
 )
 
@@ -77,11 +76,8 @@ fun compress(issues: Collection<IssueOverview>): CompressedIssues {
     val stateEncodeMap = HashMap<String, Int>()
     val priorityEncodeMap = HashMap<String, Int>()
     val subsystemEncodeMap = HashMap<String, Int>()
-    var createdMin: Long = Long.MAX_VALUE
 
     for (issue in issues) {
-        createdMin = Math.min(createdMin, issue.created)
-
         encode(issue.assignee, assigneeEncodeMap)
         encode(issue.state, stateEncodeMap)
         encode(issue.priority, priorityEncodeMap)
@@ -97,7 +93,7 @@ fun compress(issues: Collection<IssueOverview>): CompressedIssues {
                 issue.summary,
                 issue.priority?.let { priorityEncodeMap[issue.priority]!! },
                 stateEncodeMap[issue.state]!!,
-                issue.created - createdMin,
+                issue.created,
                 issue.votes,
                 issue.assignee?.let { assigneeEncodeMap[issue.assignee]!! },
                 issue.subsystems.map { subsystem -> subsystemEncodeMap[subsystem]!! }.toTypedArray()
@@ -109,7 +105,6 @@ fun compress(issues: Collection<IssueOverview>): CompressedIssues {
             subsystems = subsystemEncodeMap.invert(),
             states = stateEncodeMap.invert(),
             priorities = priorityEncodeMap.invert(),
-            createdMin = createdMin,
             issues = compressedIssues.toTypedArray()
     )
 }

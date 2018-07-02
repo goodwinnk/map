@@ -312,10 +312,6 @@ function hexagon(r) {
         (-r) + "," + (-a);
 }
 
-function decodeCreatedDate(compressedIssues, date) {
-    return compressedIssues.createdMin + date
-}
-
 function decodeSubsystems(compressedIssues, subsystems) {
     return subsystems.map(function(subsystem) {
         return decodeSubsystem(compressedIssues, subsystem)
