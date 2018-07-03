@@ -22,6 +22,12 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
+                <li class="navbar-text">
+                    Votes heat map
+                </li>
+                <li class="navbar-text">
+                    <span id="date_selection"></span>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Filter: <span id="filter_selection">All</span>
@@ -34,12 +40,6 @@
                         <li><a href="?q=compiler" onclick="hrefParam('q', 'compiler'); return false;">Compiler</a></li>
                         <li><a href="?q=other" onclick="hrefParam('q', 'other'); return false;">Other</a></li>
                     </ul>
-                </li>
-                <li class="navbar-text">
-                    <span id="date_selection"></span>
-                </li>
-                <li class="navbar-text">
-                    Type: Votes heat map
                 </li>
             </ul>
         </div>
