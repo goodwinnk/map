@@ -74,7 +74,7 @@ function updateFilter() {
         } else if (query === "docs") {
             name = "Docs";
         } else if (query === "idea") {
-            name = "Idea"
+            name = "IDEA all (Bonus)"
         }
     }
 
