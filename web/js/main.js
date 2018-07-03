@@ -234,7 +234,9 @@ function IssueSelection(compressedIssues) {
 
 IssueSelection.prototype.closePopup = function () {
     if (this.selected) {
-        d3.select(this.selected).classed("issue_selected", false);
+        var oldPolygon = d3.select(this.selected);
+        oldPolygon.classed("issue_selected", false);
+        oldPolygon.classed("issue_visited", true);
         this.selected = null;
         this.selectedIssuePanel.style.display = "none";
     }
@@ -246,8 +248,9 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     var grand = parent.parentNode;
 
     if (this.selected) {
-        d3.select(this.selected).classed("issue_selected", false);
-        d3.select(this.selected).classed("issue_visited", true);
+        var oldPolygon = d3.select(this.selected);
+        oldPolygon.classed("issue_selected", false);
+        oldPolygon.classed("issue_visited", true);
     } else {
         this.selectedIssuePanel.style.display = "block";
     }
@@ -322,9 +325,9 @@ function selectionTriangle(r) {
     var a2 = r / Math.cos(Math.PI / 6);
     var a = a2 / 2;
     return "" +
+        0 + "," + (-a2) + " " +
         r + "," + a + " " +
-        0 + "," + a2 + " " +
-        (-r) + "," + a + " "
+        (-r) + "," + a + " ";
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {

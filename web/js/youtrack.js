@@ -113,7 +113,7 @@ function loadIssues() {
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            addIssues(data);m
+            addIssues(data);
         }
     });
 }
