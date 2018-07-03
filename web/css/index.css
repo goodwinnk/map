@@ -6,7 +6,13 @@
 }
 
 .issue_selected {
-    fill: forestgreen;
+    stroke: black;
+    stroke-width: 3px;
+}
+
+.issue_visited {
+    stroke: white;
+    stroke-width: 3px;
 }
 
 .selected_issue_panel {

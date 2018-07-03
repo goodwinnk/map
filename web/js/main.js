@@ -2,6 +2,7 @@ var SIZE = 20;
 var RADIUS = SIZE / 2 * Math.sqrt(2);
 var MILISECONDS_IN_YEAR = 31536000000;
 var HEXAGON_POINTS = hexagon(RADIUS);
+var SELECTION_TRIANGLE = selectionTriangle(RADIUS);
 
 var VOTE_BASE_SIZE = 5;
 var VOTE_MAX = 200;
@@ -241,9 +242,12 @@ IssueSelection.prototype.closePopup = function () {
 
 IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     var polygon = d3.select(eventReceiver);
+    var parent = eventReceiver.parentNode;
+    var grand = parent.parentNode;
 
     if (this.selected) {
         d3.select(this.selected).classed("issue_selected", false);
+        d3.select(this.selected).classed("issue_visited", true);
     } else {
         this.selectedIssuePanel.style.display = "block";
     }
@@ -252,6 +256,8 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
         this.selected = null;
         this.selectedIssuePanel.style.display = "none";
     } else {
+        grand.appendChild(parent);
+        polygon.classed("issue_visited", false);
         polygon.classed("issue_selected", true);
         this.selected = eventReceiver;
     }
@@ -310,6 +316,15 @@ function hexagon(r) {
         0 + "," + a2 + " " +
         (-r) + "," + a + " " +
         (-r) + "," + (-a);
+}
+
+function selectionTriangle(r) {
+    var a2 = r / Math.cos(Math.PI / 6);
+    var a = a2 / 2;
+    return "" +
+        r + "," + a + " " +
+        0 + "," + a2 + " " +
+        (-r) + "," + a + " "
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {
