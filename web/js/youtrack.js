@@ -25,6 +25,19 @@ function getDate() {
     return DATES[0];
 }
 
+function getGroup() {
+    let groupStr = getParam("g");
+    if (groupStr) {
+        let groupInt = parseInt(groupStr);
+        if (groupInt === -1) {
+            return null;
+        }
+        return groupInt;
+    } else {
+        return null;
+    }
+}
+
 /**
  * @param dateStr date string in dd.MM.YYYY format
  * @return date string in YYYY.MM.dd format
@@ -107,13 +120,52 @@ function updateDate() {
     document.getElementById("date_selection").innerText = getDate();
 }
 
+function updateGroups(compressedIssues) {
+    var list = document.getElementById("group_dropdown_menu");
+    var subsystems = compressedIssues.subsystems;
+    if (!list || !subsystems) return;
+
+    var groups = {};
+    groups["All"] = -1;
+
+    Object.entries(subsystems).forEach(([key, value]) => {
+        groups[value] = key;
+    });
+
+    Object.keys(groups).sort().forEach(function (key) {
+        var value = groups[key];
+        var a = document.createElement("a");
+        a.appendChild(document.createTextNode(key));
+        a.href = "?g=" + key;
+        a.onclick = (function (groupNumber) {
+            return function () {
+                hrefParam("g", groupNumber);
+                return false;
+            }
+        })(value);
+
+        var item = document.createElement("li");
+        item.appendChild(a);
+
+        list.appendChild(item);
+    });
+
+    var groupName = subsystems[getGroup()];
+    if (!groupName) {
+        groupName = "All"
+    }
+
+    document.getElementById("group_selection").innerText = groupName;
+}
+
 function loadIssues() {
     d3.json("data/" + dateDir(getDate()) + "/" + fileName()).then(function (data) {
         var title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            addIssues(data);
+            updateGroups(data);
+            addIssues(data, getGroup());
         }
     });
 }

@@ -25,7 +25,7 @@ var svg = d3.select("#map")
 var mainG = svg.append("g");
 var issueSelection = null;
 
-function addIssues(compressedIssues) {
+function addIssues(compressedIssues, group) {
     issueSelection = new IssueSelection(compressedIssues);
 
     var coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
@@ -40,7 +40,7 @@ function addIssues(compressedIssues) {
     var votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    var issuesWithSubsystems = splitToSubsystems(compressedIssues);
+    var issuesWithSubsystems = splitToSubsystems(compressedIssues, group);
 
     var root = d3.hierarchy(issuesWithSubsystems)
         .sort(function (a, b) {
@@ -275,7 +275,7 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
 };
 
-function splitToSubsystems(compressedIssues) {
+function splitToSubsystems(compressedIssues, group) {
     var issues = compressedIssues.issues;
     var subsystemNodes = {};
 
@@ -285,6 +285,10 @@ function splitToSubsystems(compressedIssues) {
         var subsystems = issue.ss;
         for (var s = 0; s < subsystems.length; s++) {
             var subsystem = subsystems[s];
+            if (group && group !== subsystem) {
+                continue;
+            }
+
             var subsystemNode = subsystemNodes[subsystem];
 
             if (typeof subsystemNode === "undefined") {
