@@ -3,6 +3,7 @@ var RADIUS = SIZE / 2 * Math.sqrt(2);
 var MILISECONDS_IN_YEAR = 31536000000;
 var HEXAGON_POINTS = hexagon(RADIUS);
 var SELECTION_TRIANGLE = selectionTriangle(RADIUS);
+var SELECTION_LINE = selectionLine(RADIUS);
 
 var VOTE_BASE_SIZE = 5;
 var VOTE_MAX = 200;
@@ -260,6 +261,18 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
         this.selectedIssuePanel.style.display = "none";
     } else {
         grand.appendChild(parent);
+
+        var a2 = RADIUS / Math.cos(Math.PI / 6);
+        var a = a2 / 2;
+
+        d3.select(parent)
+            .append("line")
+            .attr("x1", 0)
+            .attr("y1", -a2 + 3)
+            .attr("x2", 0)
+            .attr("y2", -a2 + 6)
+            .attr("class", "issue_visited");
+
         polygon.classed("issue_visited", false);
         polygon.classed("issue_selected", true);
         this.selected = eventReceiver;
@@ -331,6 +344,14 @@ function selectionTriangle(r) {
     return "" +
         0 + "," + (-a2) + " " +
         r + "," + a + " " +
+        (-r) + "," + a + " ";
+}
+
+function selectionLine(r) {
+    var a2 = r / Math.cos(Math.PI / 6);
+    var a = a2 / 2;
+    return "" +
+        r + "," + (-a) + " " +
         (-r) + "," + a + " ";
 }
 
