@@ -1,12 +1,14 @@
-var DATES = ["02.07.2018"];
+import * as d3 from "../web/bower_components/d3/d3";
 
-var queryDict = null;
+const DATES = ["02.07.2018"];
+
+let queryDict = null;
 
 function getParam(paramName) {
     if (!queryDict) {
         queryDict = {};
         location.search.substr(1).split("&").forEach(function (item) {
-            var keyValue = item.split("=");
+            const keyValue = item.split("=");
             queryDict[keyValue[0]] = keyValue[1]
         });
     }
@@ -15,7 +17,7 @@ function getParam(paramName) {
 }
 
 function getDate() {
-    var date = getParam("d");
+    const date = getParam("d");
     if (date) {
         if (DATES.includes(date)) {
             return date;
@@ -43,12 +45,12 @@ function getGroup() {
  * @return date string in YYYY.MM.dd format
  */
 function dateDir(dateStr) {
-    var parts = dateStr.split('.');
+    const parts = dateStr.split('.');
     return parts[2] + "." + parts[1] + "." + parts[0];
 }
 
 function fileName() {
-    var query = getParam("q");
+    const query = getParam("q");
     if (query) {
         if (query === "all") {
             return "kt-all.json";
@@ -71,8 +73,8 @@ function fileName() {
 }
 
 function updateFilter() {
-    var name = "Compiler";
-    var query = getParam("q");
+    let name = "Compiler";
+    const query = getParam("q");
     if (query) {
         if (query === "all") {
             name = "All";
@@ -95,12 +97,12 @@ function updateFilter() {
 }
 
 function updateDate() {
-    var list = document.getElementById("date_dropdown_menu");
+    const list = document.getElementById("date_dropdown_menu");
     if (list) {
-        for (var i = 0; i < DATES.length; i++) {
-            var dateStr = DATES[i];
+        for (let i = 0; i < DATES.length; i++) {
+            const dateStr = DATES[i];
 
-            var a = document.createElement("a");
+            const a = document.createElement("a");
             a.appendChild(document.createTextNode(dateStr));
             a.href = "?d=" + dateStr;
             a.onclick = (function (value) {
@@ -110,7 +112,7 @@ function updateDate() {
                 }
             })(dateStr);
 
-            var item = document.createElement("li");
+            const item = document.createElement("li");
             item.appendChild(a);
 
             list.appendChild(item);
@@ -120,17 +122,20 @@ function updateDate() {
     document.getElementById("date_selection").innerText = getDate();
 }
 
+/**
+ * @param {{subsystems:Map}} compressedIssues
+ */
 function updateGroups(compressedIssues) {
     let query = getParam("q");
     if (query !== "all" && query !== "idea") return;
 
     document.getElementById("group_dropdown").style.display = "block";
 
-    var list = document.getElementById("group_dropdown_menu");
-    var subsystems = compressedIssues.subsystems;
+    let list = document.getElementById("group_dropdown_menu");
+    let subsystems = compressedIssues.subsystems;
     if (!list || !subsystems) return;
 
-    var groups = {};
+    const groups = {};
     groups["All"] = undefined;
 
     Object.entries(subsystems).forEach(([key, value]) => {
@@ -138,8 +143,8 @@ function updateGroups(compressedIssues) {
     });
 
     Object.keys(groups).sort().forEach(function (key) {
-        var value = groups[key];
-        var a = document.createElement("a");
+        const value = groups[key];
+        const a = document.createElement("a");
         a.appendChild(document.createTextNode(key));
         a.href = key !== undefined ? "?g=" + key : "";
         a.onclick = (function (groupNumber) {
@@ -149,13 +154,13 @@ function updateGroups(compressedIssues) {
             }
         })(value);
 
-        var item = document.createElement("li");
+        const item = document.createElement("li");
         item.appendChild(a);
 
         list.appendChild(item);
     });
 
-    var groupName = subsystems[getGroup()];
+    let groupName = subsystems[getGroup()];
     if (!groupName) {
         groupName = "All"
     }
@@ -165,7 +170,7 @@ function updateGroups(compressedIssues) {
 
 function loadIssues() {
     d3.json("data/" + dateDir(getDate()) + "/" + fileName()).then(function (data) {
-        var title = document.getElementById("issue_title");
+        const title = document.getElementById("issue_title");
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
@@ -184,23 +189,23 @@ function hrefParam(key, value, clearParams) {
 
     const isDefaultValue = value === undefined || value === null;
 
-    var paramsArray = document.location.search.substr(1).split('&');
+    let paramsArray = document.location.search.substr(1).split('&');
     if (paramsArray.length === 1 && paramsArray[0] === "") {
         paramsArray = [];
     }
     const filteredParams = (clearParams !== undefined || isDefaultValue) ?
         paramsArray.filter(param => {
-            var [pKey] = param.split('=');
-            var inClearParams = (clearParams !== undefined) ? clearParams.includes(pKey) : false;
-            var isDefaultValueKey = isDefaultValue && pKey === encodedKey;
+            const [pKey] = param.split('=');
+            const inClearParams = (clearParams !== undefined) ? clearParams.includes(pKey) : false;
+            const isDefaultValueKey = isDefaultValue && pKey === encodedKey;
             return !(inClearParams || isDefaultValueKey);
         }) :
         paramsArray;
 
     if (!isDefaultValue) {
-        var index = filteredParams.length;
-        for (var i = 0; i < paramsArray.length; i++) {
-            var [pKey] = paramsArray[i].split('=');
+        let index = filteredParams.length;
+        for (let i = 0; i < paramsArray.length; i++) {
+            const [pKey] = paramsArray[i].split('=');
             if (pKey === encodedKey) {
                 index = i;
                 break;

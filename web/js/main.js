@@ -1,50 +1,52 @@
-var SIZE = 20;
-var RADIUS = SIZE / 2 * Math.sqrt(2);
-var MILISECONDS_IN_YEAR = 31536000000;
-var HEXAGON_POINTS = hexagon(RADIUS);
+import * as d3 from "../web/bower_components/d3/d3";
 
-var VOTE_BASE_SIZE = 5;
-var VOTE_MAX = 200;
-var VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
+const SIZE = 20;
+const RADIUS = SIZE / 2 * Math.sqrt(2);
+const MILISECONDS_IN_YEAR = 31536000000;
+const HEXAGON_POINTS = hexagon(RADIUS);
 
-var width = window.innerWidth,
+const VOTE_BASE_SIZE = 5;
+const VOTE_MAX = 200;
+const VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
+
+const width = window.innerWidth,
     height = window.innerHeight;
 
-var scale = 1;
+let scale = 1;
 
-var zoom = d3.zoom().on("zoom", zoomed);
+const zoom = d3.zoom().on("zoom", zoomed);
 
-var svg = d3.select("#map")
+const svg = d3.select("#map")
     .append("svg")
     .attr("class", "view")
     .attr("width", width)
     .attr("height", height)
     .call(zoom);
 
-var mainG = svg.append("g");
-var issueSelection = null;
+const mainG = svg.append("g");
+let issueSelection = null;
 
 function addIssues(compressedIssues, group) {
     issueSelection = new IssueSelection(compressedIssues);
 
-    var coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
-    var colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
+    const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
+    const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
     colourRangeRainbow.push(1);
 
-    var colorScaleRainbow = d3.scaleLinear()
+    const colorScaleRainbow = d3.scaleLinear()
         .domain(colourRangeRainbow)
         .range(coloursRainbow)
         .interpolate(d3.interpolateHcl);
 
-    var votesLogScale = d3.scaleLog()
+    const votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    var issuesWithSubsystems = splitToSubsystems(compressedIssues, group);
+    const issuesWithSubsystems = splitToSubsystems(compressedIssues, group);
 
-    var root = d3.hierarchy(issuesWithSubsystems)
+    const root = d3.hierarchy(issuesWithSubsystems)
         .sort(function (a, b) {
-            var aIsChild = a.data.children === undefined;
-            var bIsChild = b.data.children === undefined;
+            let aIsChild = a.data.children === undefined;
+            let bIsChild = b.data.children === undefined;
 
             if (aIsChild && bIsChild) {
                 if (b.data.v !== a.data.v) {
@@ -62,7 +64,7 @@ function addIssues(compressedIssues, group) {
         })
         .count();
 
-    var bubble = d3.pack()
+    const bubble = d3.pack()
         .size([width, height])
         .padding(function (d) {
             if (d === root) {
@@ -74,10 +76,10 @@ function addIssues(compressedIssues, group) {
 
     bubble(root);
 
-    var leafR = RADIUS;
-    var firstGroupNode = root.children[0];
+    let leafR = RADIUS;
+    const firstGroupNode = root.children[0];
     if (firstGroupNode) {
-        var firstLeaf = firstGroupNode.children[0];
+        const firstLeaf = firstGroupNode.children[0];
         if (firstLeaf) {
             leafR = firstLeaf.r;
         }
@@ -91,7 +93,7 @@ function addIssues(compressedIssues, group) {
         d.r /= scale;
     });
 
-    var groupNode = mainG.selectAll(".group")
+    const groupNode = mainG.selectAll(".group")
         .data(root.descendants().filter(function (d) {
             return d !== root && d.children;
         }))
@@ -113,9 +115,9 @@ function addIssues(compressedIssues, group) {
             return d.data.name;
         });
 
-    var node = mainG.selectAll(".issue")
+    const node = mainG.selectAll(".issue")
         .data(root.leaves().sort(function (a, b) {
-            var dy = a.y - b.y;
+            const dy = a.y - b.y;
             if (dy > 0.001) {
                 return dy;
             }
@@ -131,8 +133,8 @@ function addIssues(compressedIssues, group) {
 
     node.append("title")
         .text(function (d) {
-            var groupData = d.parent.data;
-            var data = d.data;
+            const groupData = d.parent.data;
+            const data = d.data;
             return groupData.name + " - [" + data.id + "] " + data.s;
         })
     ;
@@ -141,7 +143,7 @@ function addIssues(compressedIssues, group) {
         .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
-            var votes = d.data.v;
+            let votes = d.data.v;
             if (!votes) {
                 votes = 0;
             }
@@ -155,10 +157,10 @@ function addIssues(compressedIssues, group) {
         })
     ;
 
-    var today = Date.now();
-    for (var i = 1; i <= 5; i++) {
-        var numberOfYears = i;
-        var yearRadius = RADIUS / 6 * (6 - numberOfYears);
+    const today = Date.now();
+    for (let i = 1; i <= 5; i++) {
+        const numberOfYears = i;
+        const yearRadius = RADIUS / 6 * (6 - numberOfYears);
 
         node
             .filter(function (d) {
@@ -189,7 +191,7 @@ function addIssues(compressedIssues, group) {
             return d.data.v;
         });
 
-    var groupLabels = mainG.selectAll(".groups-label")
+    mainG.selectAll(".groups-label")
         .data(root.descendants().filter(function (d) {
             return d !== root && d.children;
         }))
@@ -200,7 +202,7 @@ function addIssues(compressedIssues, group) {
         .append("text")
         .attr("class", "group-label")
         .text(function (d) {
-            var groupName = d.data.name;
+            const groupName = d.data.name;
             return d.children.length <= 5 ? "" + groupName : "" + groupName + " (" + d.children.length + ")";
         })
         .attr("y", function (d) {
@@ -213,7 +215,7 @@ function addIssues(compressedIssues, group) {
     } else {
         zoom.scaleExtent([scale, 2]);
     }
-    var t = d3.zoomIdentity.scale(scale);
+    const t = d3.zoomIdentity.scale(scale);
     zoom.transform(svg, t);
 }
 
@@ -233,7 +235,7 @@ function IssueSelection(compressedIssues) {
 
 IssueSelection.prototype.closePopup = function () {
     if (this.selected) {
-        var oldPolygon = d3.select(this.selected);
+        const oldPolygon = d3.select(this.selected);
         oldPolygon.classed("issue_selected", false);
         oldPolygon.classed("issue_visited", true);
         this.selected = null;
@@ -242,12 +244,12 @@ IssueSelection.prototype.closePopup = function () {
 };
 
 IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
-    var polygon = d3.select(eventReceiver);
-    var parent = eventReceiver.parentNode;
-    var grand = parent.parentNode;
+    const polygon = d3.select(eventReceiver);
+    const parent = eventReceiver.parentNode;
+    const grand = parent.parentNode;
 
     if (this.selected) {
-        var oldPolygon = d3.select(this.selected);
+        const oldPolygon = d3.select(this.selected);
         oldPolygon.classed("issue_selected", false);
         oldPolygon.classed("issue_visited", true);
     } else {
@@ -260,9 +262,7 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     } else {
         grand.appendChild(parent);
 
-        var a2 = RADIUS / Math.cos(Math.PI / 6);
-        var a = a2 / 2;
-
+        let a2 = RADIUS / Math.cos(Math.PI / 6);
         d3.select(parent)
             .append("line")
             .attr("x1", 0)
@@ -276,7 +276,7 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
         this.selected = eventReceiver;
     }
 
-    var data = d.data;
+    const data = d.data;
     this.selectedReferenceElement.innerText = "[" + data.id + "]";
     this.selectedReferenceElement.href = "https://youtrack.jetbrains.com/issue/" + d.data.id;
     this.descriptionElement.innerText = data.s;
@@ -286,23 +286,29 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
 };
 
+/**
+ *
+ * @param {{issues:Array()}}compressedIssues
+ * @param group
+ * @return {{children}}
+ */
 function splitToSubsystems(compressedIssues, group) {
-    var issues = compressedIssues.issues;
-    var subsystemNodes = {};
+    const issues = compressedIssues.issues;
+    const subsystemNodes = {};
 
-    for (var i = 0; i < issues.length; i++) {
-        var issue = issues[i];
+    for (let i = 0; i < issues.length; i++) {
+        const issue = issues[i];
 
-        var subsystems = issue.ss;
-        for (var s = 0; s < subsystems.length; s++) {
-            var subsystem = subsystems[s];
+        const subsystems = issue.ss;
+        for (let s = 0; s < subsystems.length; s++) {
+            const subsystem = subsystems[s];
             if (group !== undefined && group !== null) {
                 if (group !== subsystem) {
                     continue;
                 }
             }
 
-            var subsystemNode = subsystemNodes[subsystem];
+            let subsystemNode = subsystemNodes[subsystem];
 
             if (typeof subsystemNode === "undefined") {
                 subsystemNode = {
@@ -322,13 +328,13 @@ function splitToSubsystems(compressedIssues, group) {
 }
 
 function zoomed() {
-    var event = d3.event;
+    const event = d3.event;
     mainG.attr("transform", event.transform);
 }
 
 function hexagon(r) {
-    var a2 = r / Math.cos(Math.PI / 6);
-    var a = a2 / 2;
+    let a2 = r / Math.cos(Math.PI / 6);
+    let a = a2 / 2;
     return "" +
         0 + "," + (-a2) + " " +
         r + "," + (-a) + " " +
