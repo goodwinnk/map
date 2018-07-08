@@ -121,6 +121,11 @@ function updateDate() {
 }
 
 function updateGroups(compressedIssues) {
+    let query = getParam("q");
+    if (query !== "all" && query !== "idea") return;
+
+    document.getElementById("group_dropdown").style.display = "block";
+
     var list = document.getElementById("group_dropdown_menu");
     var subsystems = compressedIssues.subsystems;
     if (!list || !subsystems) return;
