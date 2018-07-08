@@ -298,8 +298,10 @@ function splitToSubsystems(compressedIssues, group) {
         var subsystems = issue.ss;
         for (var s = 0; s < subsystems.length; s++) {
             var subsystem = subsystems[s];
-            if (group && group !== subsystem) {
-                continue;
+            if (group !== undefined && group !== null) {
+                if (group !== subsystem) {
+                    continue;
+                }
             }
 
             var subsystemNode = subsystemNodes[subsystem];

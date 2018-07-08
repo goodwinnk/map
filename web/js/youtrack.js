@@ -126,7 +126,7 @@ function updateGroups(compressedIssues) {
     if (!list || !subsystems) return;
 
     var groups = {};
-    groups["All"] = -1;
+    groups["All"] = undefined;
 
     Object.entries(subsystems).forEach(([key, value]) => {
         groups[value] = key;
@@ -136,7 +136,7 @@ function updateGroups(compressedIssues) {
         var value = groups[key];
         var a = document.createElement("a");
         a.appendChild(document.createTextNode(key));
-        a.href = "?g=" + key;
+        a.href = key !== undefined ? "?g=" + key : "";
         a.onclick = (function (groupNumber) {
             return function () {
                 hrefParam("g", groupNumber);
@@ -174,22 +174,41 @@ function yt(suffix) {
     return "http://localhost/test/" + suffix;
 }
 
-function hrefParam(key, value) {
-    key = encodeURI(key);
-    value = encodeURI(value);
+function hrefParam(key, value, clearParams) {
+    const encodedKey = encodeURI(key);
+
+    const isDefaultValue = value === undefined || value === null;
 
     var paramsArray = document.location.search.substr(1).split('&');
+    if (paramsArray.length === 1 && paramsArray[0] === "") {
+        paramsArray = [];
+    }
+    const filteredParams = (clearParams !== undefined || isDefaultValue) ?
+        paramsArray.filter(param => {
+            var [pKey] = param.split('=');
+            var inClearParams = (clearParams !== undefined) ? clearParams.includes(pKey) : false;
+            var isDefaultValueKey = isDefaultValue && pKey === encodedKey;
+            return !(inClearParams || isDefaultValueKey);
+        }) :
+        paramsArray;
 
-    var index = paramsArray.length;
-    for (var i = 0; i < paramsArray.length; i++) {
-        var x = paramsArray[i].split('=');
-        if (x[0] === key) {
-            index = i;
-            break;
+    if (!isDefaultValue) {
+        var index = filteredParams.length;
+        for (var i = 0; i < paramsArray.length; i++) {
+            var [pKey] = paramsArray[i].split('=');
+            if (pKey === encodedKey) {
+                index = i;
+                break;
+            }
         }
+
+        filteredParams[index] = [encodedKey, encodeURI(value)].join('=');
     }
 
-    paramsArray[index] = [key, value].join('=');
+    if (filteredParams.length === 0) {
+        document.location.href = document.location.href.split("?")[0];
+        return;
+    }
 
-    document.location.search = paramsArray.join('&');
+    document.location.search = filteredParams.join('&');
 }
