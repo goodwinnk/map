@@ -1,5 +1,3 @@
-import * as d3 from "../web/bower_components/d3/d3";
-
 const DATES = ["02.07.2018"];
 
 let queryDict = null;

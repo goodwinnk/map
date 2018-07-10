@@ -17,6 +17,7 @@
   "dependencies": {
     "d3": "5.4.0",
     "bootstrap": "^3.3.6",
-    "components-font-awesome": "5.0.6"
+    "components-font-awesome": "5.0.6",
+    "store-js": "^2.0.12"
   }
 }

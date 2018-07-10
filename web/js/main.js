@@ -1,7 +1,6 @@
-import * as d3 from "../web/bower_components/d3/d3";
-
 const SIZE = 20;
 const RADIUS = SIZE / 2 * Math.sqrt(2);
+const A2 = RADIUS / Math.cos(Math.PI / 6);
 const MILISECONDS_IN_YEAR = 31536000000;
 const HEXAGON_POINTS = hexagon(RADIUS);
 
@@ -139,7 +138,7 @@ function addIssues(compressedIssues, group) {
         })
     ;
 
-    node.append("polygon")
+    const issuePolygons = node.append("polygon")
         .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
@@ -154,8 +153,7 @@ function addIssues(compressedIssues, group) {
         })
         .on("click", function (d) {
             issueSelection.selectIssue(this, d);
-        })
-    ;
+        });
 
     const today = Date.now();
     for (let i = 1; i <= 5; i++) {
@@ -210,6 +208,18 @@ function addIssues(compressedIssues, group) {
         })
         .attr("text-anchor", "middle");
 
+    let firstIssue = compressedIssues.issues[0];
+    if (firstIssue) {
+        const visitedIssuesSet = issueSelection.fetchVisited(firstIssue.id);
+        issuePolygons
+            .filter((d) => {
+                return visitedIssuesSet[d.data.id];
+            })
+            .each((d, index, nodes) => {
+                issueSelection.markVisited(nodes[index]);
+            });
+    }
+
     if (scale >= 1) {
         zoom.scaleExtent([1, 2]);
     } else {
@@ -243,15 +253,59 @@ IssueSelection.prototype.closePopup = function () {
     }
 };
 
-IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
-    const polygon = d3.select(eventReceiver);
-    const parent = eventReceiver.parentNode;
-    const grand = parent.parentNode;
+IssueSelection.prototype.updateVisited = function(issueId) {
+    let [prefix, number] = issueId.split("-");
+    const key = prefix + Math.floor(parseInt(number) / 1000);
+    let visitedStr = store.get(key);
+    if (visitedStr === undefined) {
+        visitedStr = "";
+    }
 
+    const visited = visitedStr.split("\n");
+    if (!visited.includes(issueId)) {
+        visitedStr += issueId + "\n";
+        store.set(key, visitedStr);
+    }
+};
+
+IssueSelection.prototype.fetchVisited = function (someId) {
+    let [prefix] = someId.split("-");
+
+    const all = {};
+
+    store.each((value, key) => {
+        if (key.startsWith(prefix)) {
+            let issuesIds = value.split("\n");
+            for (const id of issuesIds) {
+                all[id] = true;
+            }
+        }
+    });
+
+    return all;
+};
+
+IssueSelection.prototype.markVisited = function (polygonNode) {
+    const oldParent = polygonNode.parentNode;
+    const oldGrand = oldParent.parentNode;
+    oldGrand.appendChild(oldParent);
+
+    const oldPolygon = d3.select(polygonNode);
+    oldPolygon.classed("issue_selected", false);
+    oldPolygon.classed("issue_visited", true);
+
+    d3.select(oldParent)
+        .append("line")
+        .attr("x1", 0)
+        .attr("y1", -A2 + 3)
+        .attr("x2", 0)
+        .attr("y2", -A2 + 6)
+        .attr("class", "issue_visited");
+};
+
+IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     if (this.selected) {
-        const oldPolygon = d3.select(this.selected);
-        oldPolygon.classed("issue_selected", false);
-        oldPolygon.classed("issue_visited", true);
+        this.markVisited(this.selected);
     } else {
         this.selectedIssuePanel.style.display = "block";
     }
@@ -260,19 +314,16 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
         this.selected = null;
         this.selectedIssuePanel.style.display = "none";
     } else {
-        grand.appendChild(parent);
+        const polygon = d3.select(eventReceiver);
+        const parent = eventReceiver.parentNode;
+        const grand = parent.parentNode;
 
-        let a2 = RADIUS / Math.cos(Math.PI / 6);
-        d3.select(parent)
-            .append("line")
-            .attr("x1", 0)
-            .attr("y1", -a2 + 3)
-            .attr("x2", 0)
-            .attr("y2", -a2 + 6)
-            .attr("class", "issue_visited");
+        this.updateVisited(d.data.id);
+        grand.appendChild(parent);
 
         polygon.classed("issue_visited", false);
         polygon.classed("issue_selected", true);
+
         this.selected = eventReceiver;
     }
 
@@ -333,13 +384,12 @@ function zoomed() {
 }
 
 function hexagon(r) {
-    let a2 = r / Math.cos(Math.PI / 6);
-    let a = a2 / 2;
+    let a = A2 / 2;
     return "" +
-        0 + "," + (-a2) + " " +
+        0 + "," + (-A2) + " " +
         r + "," + (-a) + " " +
         r + "," + a + " " +
-        0 + "," + a2 + " " +
+        0 + "," + A2 + " " +
         (-r) + "," + a + " " +
         (-r) + "," + (-a);
 }
