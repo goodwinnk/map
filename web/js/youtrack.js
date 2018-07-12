@@ -1,4 +1,5 @@
 const DATES = ["02.07.2018"];
+const ASSIGNEE_PARAM = "assignee";
 
 let queryDict = null;
 
@@ -27,6 +28,19 @@ function getDate() {
 
 function getGroup() {
     let groupStr = getParam("g");
+    if (groupStr) {
+        let groupInt = parseInt(groupStr);
+        if (groupInt === -1) {
+            return null;
+        }
+        return groupInt;
+    } else {
+        return null;
+    }
+}
+
+function getAssignee() {
+    let groupStr = getParam(ASSIGNEE_PARAM);
     if (groupStr) {
         let groupInt = parseInt(groupStr);
         if (groupInt === -1) {
@@ -123,31 +137,40 @@ function updateDate() {
 /**
  * @param {{subsystems:Map}} compressedIssues
  */
-function updateGroups(compressedIssues) {
+function updateSubsystems(compressedIssues) {
     let query = getParam("q");
     if (query !== "all" && query !== "idea") return;
 
     document.getElementById("group_dropdown").style.display = "block";
 
-    let list = document.getElementById("group_dropdown_menu");
-    let subsystems = compressedIssues.subsystems;
-    if (!list || !subsystems) return;
+    fillFilter(compressedIssues.subsystems, "g", "group_dropdown_menu");
+    fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
+}
 
-    const groups = {};
-    groups["All"] = undefined;
+function updateAssignees(compressedIssues) {
+    fillFilter(compressedIssues.assignees, "assignee", "assignee_dropdown_menu");
+    fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection");
+}
 
-    Object.entries(subsystems).forEach(([key, value]) => {
-        groups[value] = key;
+function fillFilter(variantsObject, parameterName, dropdownVariantsId) {
+    let list = document.getElementById(dropdownVariantsId);
+    if (!list || !variantsObject) return;
+
+    const variantsNameToId = {};
+    variantsNameToId["All"] = undefined;
+
+    Object.entries(variantsObject).forEach(([key, value]) => {
+        variantsNameToId[value] = key;
     });
 
-    Object.keys(groups).sort().forEach(function (key) {
-        const value = groups[key];
+    Object.keys(variantsNameToId).sort().forEach(function (key) {
+        const value = variantsNameToId[key];
         const a = document.createElement("a");
         a.appendChild(document.createTextNode(key));
-        a.href = key !== undefined ? "?g=" + key : "";
+        a.href = key !== undefined ? "?" + parameterName + "=" + key : "";
         a.onclick = (function (groupNumber) {
             return function () {
-                hrefParam("g", groupNumber);
+                hrefParam(parameterName, groupNumber);
                 return false;
             }
         })(value);
@@ -157,13 +180,15 @@ function updateGroups(compressedIssues) {
 
         list.appendChild(item);
     });
+}
 
-    let groupName = subsystems[getGroup()];
+function fillFilterSelection(variantsObject, currentValue, dropdownSelectionId) {
+    let groupName = variantsObject[currentValue];
     if (!groupName) {
         groupName = "All"
     }
 
-    document.getElementById("group_selection").innerText = groupName;
+    document.getElementById(dropdownSelectionId).innerText = groupName;
 }
 
 function loadIssues() {
@@ -172,8 +197,9 @@ function loadIssues() {
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            updateGroups(data);
-            addIssues(data, getGroup());
+            updateSubsystems(data);
+            updateAssignees(data);
+            addIssues(data, getGroup(), getAssignee());
         }
     });
 }

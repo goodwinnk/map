@@ -34,11 +34,11 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="?q=all" onclick="hrefParam('q', 'all', ['g']); return false;">All</a></li>
-                        <li><a href="?q=ide" onclick="hrefParam('q', 'ide', ['g']); return false;">IDE</a></li>
-                        <li><a href="?q=tools" onclick="hrefParam('q', 'tools', ['g']); return false;">Tools</a></li>
-                        <li><a href="?q=compiler" onclick="hrefParam('q', undefined, ['g']); return false;">Compiler</a></li>
-                        <li><a href="?q=other" onclick="hrefParam('q', 'other', ['g']); return false;">Other</a></li>
+                        <li><a href="?q=all" onclick="hrefParam('q', 'all', ['g', 'assignee']); return false;">All</a></li>
+                        <li><a href="?q=ide" onclick="hrefParam('q', 'ide', ['g', 'assignee']); return false;">IDE</a></li>
+                        <li><a href="?q=tools" onclick="hrefParam('q', 'tools', ['g', 'assignee']); return false;">Tools</a></li>
+                        <li><a href="?q=compiler" onclick="hrefParam('q', undefined, ['g', 'assignee']); return false;">Compiler</a></li>
+                        <li><a href="?q=other" onclick="hrefParam('q', 'other', ['g', 'assignee']); return false;">Other</a></li>
                     </ul>
                 </li>
                 <li class="dropdown" id="group_dropdown">
@@ -47,6 +47,14 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" id="group_dropdown_menu">
+                    </ul>
+                </li>
+                <li class="dropdown" id="assignee_dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Assignee: <span id="assignee_selection">All</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" id="assignee_dropdown_menu">
                     </ul>
                 </li>
             </ul>
