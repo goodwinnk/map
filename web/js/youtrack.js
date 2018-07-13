@@ -145,16 +145,16 @@ function updateSubsystems(compressedIssues) {
 
     document.getElementById("group_dropdown").style.display = "block";
 
-    fillFilter(compressedIssues.subsystems, "g", "group_dropdown_menu");
+    fillFilter(compressedIssues.subsystems, undefined, "g", "group_dropdown_menu");
     fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
 }
 
 function updateAssignees(compressedIssues) {
-    fillFilter(compressedIssues.assignees, "assignee", "assignee_dropdown_menu");
+    fillFilter(compressedIssues.assignees, compressedIssues.assigneeCount, ASSIGNEE_PARAM, "assignee_dropdown_menu");
     fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection");
 }
 
-function fillFilter(variantsObject, parameterName, dropdownVariantsId) {
+function fillFilter(variantsObject, variantsCount, parameterName, dropdownVariantsId) {
     let list = document.getElementById(dropdownVariantsId);
     if (!list || !variantsObject) return;
 
@@ -162,14 +162,24 @@ function fillFilter(variantsObject, parameterName, dropdownVariantsId) {
     variantsNameToId["All"] = undefined;
 
     Object.entries(variantsObject).forEach(([key, value]) => {
+        if (variantsCount !== undefined) {
+            const count = variantsCount[key];
+            if (count === undefined || count === 0) {
+                return;
+            }
+        }
         variantsNameToId[value] = key;
     });
 
     Object.keys(variantsNameToId).sort().forEach(function (key) {
         const value = variantsNameToId[key];
         const a = document.createElement("a");
-        a.appendChild(document.createTextNode(key));
-        a.href = key !== undefined ? "?" + parameterName + "=" + key : "";
+
+        const count = variantsCount !== undefined ? variantsCount[value] : undefined;
+        const text = count === undefined ? key : key + " (" + count + ")";
+
+        a.appendChild(document.createTextNode(text));
+
         a.onclick = (function (groupNumber) {
             return function () {
                 hrefParam(parameterName, groupNumber);
@@ -199,11 +209,66 @@ function loadIssues() {
         if (undefined === data) {
             title.innerHTML = "No Data";
         } else {
-            updateSubsystems(data);
-            updateAssignees(data);
-            addIssues(data, getGroup(), getAssignee());
+            const updatedData = filterIssues(data);
+            updateSubsystems(updatedData);
+            updateAssignees(updatedData);
+            addIssues(updatedData, getGroup(), getAssignee());
         }
     });
+}
+
+function filterIssues(compressedIssues) {
+    const subsystem = getGroup();
+    const assignee = getAssignee();
+
+    const subsystemCount = {};
+    const assigneeCount = {};
+
+    const filteredIssues = [];
+
+    const issues = compressedIssues.issues;
+    for (let i = 0; i < issues.length; i++) {
+        const issue = issues[i];
+        const subsystems = issue.ss;
+
+        if (assignee !== undefined && assignee !== null) {
+            if (assignee !== issue.a) {
+                continue;
+            }
+        }
+
+        if (subsystem !== undefined && subsystem !== null) {
+            if (!subsystems.includes(subsystem)) {
+                continue;
+            }
+        }
+
+        filteredIssues.push(issue);
+
+        const issueAssignee = issue.a;
+        if (issueAssignee !== undefined) {
+            if (assigneeCount[issueAssignee] === undefined) {
+                assigneeCount[issueAssignee] = 0;
+            }
+
+            assigneeCount[issueAssignee]++;
+        }
+
+        for (let s = 0; s < subsystems.length; s++) {
+            const issueSubsystem = subsystems[s];
+            if (subsystemCount[issueSubsystem] === undefined) {
+                subsystemCount[issueSubsystem] = 0;
+            }
+
+            subsystemCount[issueSubsystem]++;
+        }
+    }
+
+    compressedIssues.issues = filteredIssues;
+    compressedIssues["assigneeCount"] = assigneeCount;
+    compressedIssues["subsystemCount"] = subsystemCount;
+
+    return compressedIssues;
 }
 
 function yt(suffix) {
