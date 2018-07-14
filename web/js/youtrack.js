@@ -29,7 +29,7 @@ function getDate() {
 }
 
 function getGroup() {
-    let groupStr = getParam("g");
+    let groupStr = getParam(SUBSYSTEM_PARAM);
     if (groupStr) {
         let groupInt = parseInt(groupStr);
         if (groupInt === -1) {
@@ -145,16 +145,23 @@ function updateSubsystems(compressedIssues) {
 
     document.getElementById("group_dropdown").style.display = "block";
 
-    fillFilter(compressedIssues.subsystems, undefined, "g", "group_dropdown_menu");
+    fillFilter(
+        compressedIssues.subsystems,
+        compressedIssues.subsystemCount,
+        SUBSYSTEM_PARAM, [ASSIGNEE_PARAM],
+        "group_dropdown_menu");
     fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
 }
 
 function updateAssignees(compressedIssues) {
-    fillFilter(compressedIssues.assignees, compressedIssues.assigneeCount, ASSIGNEE_PARAM, "assignee_dropdown_menu");
+    fillFilter(
+        compressedIssues.assignees, compressedIssues.assigneeCount,
+        ASSIGNEE_PARAM, undefined,
+        "assignee_dropdown_menu");
     fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection");
 }
 
-function fillFilter(variantsObject, variantsCount, parameterName, dropdownVariantsId) {
+function fillFilter(variantsObject, variantsCount, parameterName, clearParams, dropdownVariantsId) {
     let list = document.getElementById(dropdownVariantsId);
     if (!list || !variantsObject) return;
 
@@ -182,7 +189,7 @@ function fillFilter(variantsObject, variantsCount, parameterName, dropdownVarian
 
         a.onclick = (function (groupNumber) {
             return function () {
-                hrefParam(parameterName, groupNumber);
+                hrefParam(parameterName, groupNumber, clearParams);
                 return false;
             }
         })(value);
@@ -231,15 +238,6 @@ function filterIssues(compressedIssues) {
         const issue = issues[i];
         const subsystems = issue.ss;
 
-        const issueAssignee = issue.a;
-        if (issueAssignee !== undefined) {
-            if (assigneeCount[issueAssignee] === undefined) {
-                assigneeCount[issueAssignee] = 0;
-            }
-
-            assigneeCount[issueAssignee]++;
-        }
-
         for (let s = 0; s < subsystems.length; s++) {
             const issueSubsystem = subsystems[s];
             if (subsystemCount[issueSubsystem] === undefined) {
@@ -249,14 +247,23 @@ function filterIssues(compressedIssues) {
             subsystemCount[issueSubsystem]++;
         }
 
-        if (assignee !== undefined && assignee !== null) {
-            if (assignee !== issueAssignee) {
+        if (subsystem !== undefined && subsystem !== null) {
+            if (!subsystems.includes(subsystem)) {
                 continue;
             }
         }
 
-        if (subsystem !== undefined && subsystem !== null) {
-            if (!subsystems.includes(subsystem)) {
+        const issueAssignee = issue.a;
+        if (issueAssignee !== undefined) {
+            if (assigneeCount[issueAssignee] === undefined) {
+                assigneeCount[issueAssignee] = 0;
+            }
+
+            assigneeCount[issueAssignee]++;
+        }
+
+        if (assignee !== undefined && assignee !== null) {
+            if (assignee !== issueAssignee) {
                 continue;
             }
         }
