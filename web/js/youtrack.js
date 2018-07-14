@@ -219,7 +219,7 @@ function loadIssues() {
             const updatedData = filterIssues(data);
             updateSubsystems(updatedData);
             updateAssignees(updatedData);
-            addIssues(updatedData, getGroup(), getAssignee());
+            addIssues(updatedData, getGroup());
         }
     });
 }
