@@ -221,7 +221,11 @@ function addIssues(compressedIssues) {
     }
 
     if (scale >= 1) {
-        zoom.scaleExtent([1, 2]);
+        if (scale > 2) {
+            zoom.scaleExtent([1, scale]);
+        } else {
+            zoom.scaleExtent([1, 2]);
+        }
     } else {
         zoom.scaleExtent([scale, 2]);
     }
