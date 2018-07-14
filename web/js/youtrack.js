@@ -231,20 +231,6 @@ function filterIssues(compressedIssues) {
         const issue = issues[i];
         const subsystems = issue.ss;
 
-        if (assignee !== undefined && assignee !== null) {
-            if (assignee !== issue.a) {
-                continue;
-            }
-        }
-
-        if (subsystem !== undefined && subsystem !== null) {
-            if (!subsystems.includes(subsystem)) {
-                continue;
-            }
-        }
-
-        filteredIssues.push(issue);
-
         const issueAssignee = issue.a;
         if (issueAssignee !== undefined) {
             if (assigneeCount[issueAssignee] === undefined) {
@@ -262,6 +248,20 @@ function filterIssues(compressedIssues) {
 
             subsystemCount[issueSubsystem]++;
         }
+
+        if (assignee !== undefined && assignee !== null) {
+            if (assignee !== issueAssignee) {
+                continue;
+            }
+        }
+
+        if (subsystem !== undefined && subsystem !== null) {
+            if (!subsystems.includes(subsystem)) {
+                continue;
+            }
+        }
+
+        filteredIssues.push(issue);
     }
 
     compressedIssues.issues = filteredIssues;
