@@ -194,7 +194,7 @@ function addIssues(compressedIssues, selectedSubsystem) {
             return d.data.v;
         });
 
-    mainG.selectAll(".groups-label")
+    const labelsSelection = mainG.selectAll(".group_label")
         .data(root.descendants().filter(function (d) {
             return d !== root && d.children;
         }))
@@ -203,7 +203,7 @@ function addIssues(compressedIssues, selectedSubsystem) {
             return "translate(" + d.x + "," + d.y + ")";
         })
         .append("text")
-        .attr("class", "group-label")
+        .attr("class", "group_label")
         .text(function (d) {
             const groupName = d.data.name;
             return d.children.length <= 5 ? "" + groupName : "" + groupName + " (" + d.children.length + ")";
@@ -212,6 +212,8 @@ function addIssues(compressedIssues, selectedSubsystem) {
             return -d.r - 10;
         })
         .attr("text-anchor", "middle");
+
+    issueSelection.insertBefore = labelsSelection.nodes()[0].parentNode;
 
     let firstIssue = compressedIssues.issues[0];
     if (firstIssue) {
@@ -248,6 +250,8 @@ function IssueSelection(compressedIssues) {
     this.priorityElement = document.getElementById("selected-issue-priority");
     this.statusElement = document.getElementById("selected-issue-status");
     this.assigneeElement = document.getElementById("selected-issue-assignee");
+
+    this.insertBefore = null;
 
     this.selected = null;
 }
@@ -302,7 +306,12 @@ IssueSelection.prototype.clearVisited = function () {
 IssueSelection.prototype.markVisited = function (polygonNode) {
     const oldParent = polygonNode.parentNode;
     const oldGrand = oldParent.parentNode;
-    oldGrand.appendChild(oldParent);
+
+    if (this.insertBefore != null) {
+        oldGrand.insertBefore(oldParent, this.insertBefore);
+    } else {
+        oldGrand.appendChild(oldParent);
+    }
 
     const oldPolygon = d3.select(polygonNode);
     oldPolygon.classed("issue_selected", false);
@@ -333,7 +342,12 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
         const grand = parent.parentNode;
 
         this.updateVisited(d.data.id);
-        grand.appendChild(parent);
+
+        if (this.insertBefore != null) {
+            grand.insertBefore(parent, this.insertBefore);
+        } else {
+            grand.appendChild(parent);
+        }
 
         polygon.classed("issue_visited", false);
         polygon.classed("issue_selected", true);

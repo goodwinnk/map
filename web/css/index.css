@@ -34,6 +34,10 @@
     fill: #efefef;
 }
 
+.group_label {
+    pointer-events: none;
+}
+
 #group_dropdown {
     display: none;
 }
