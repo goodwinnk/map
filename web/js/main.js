@@ -29,6 +29,10 @@ function addIssues(compressedIssues, selectedSubsystem) {
     issueSelection = new IssueSelection(compressedIssues);
     document.getElementById("clear_visited_button").onclick = issueSelection.clearVisited;
 
+    if (compressedIssues.issues.length === 0) {
+        return;
+    }
+
     const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
     const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
     colourRangeRainbow.push(1);
