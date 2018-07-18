@@ -1,4 +1,4 @@
-const DATES = ["02.07.2018"];
+const DATES = ["16.07.2018"];
 const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
 const SUBSYSTEM_PARAM = "g";
@@ -219,6 +219,7 @@ function loadIssues() {
             const updatedData = filterIssues(data);
             updateSubsystems(updatedData);
             updateAssignees(updatedData);
+            // document.getElementById("map").innerText = "";
             addIssues(updatedData, getGroup());
         }
     });

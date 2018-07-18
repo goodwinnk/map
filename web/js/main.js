@@ -9,7 +9,7 @@ const VOTE_MAX = 200;
 const VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
 
 const width = window.innerWidth,
-    height = window.innerHeight;
+    height = Math.max(window.innerHeight - 55, 100);
 
 let scale = 1;
 
