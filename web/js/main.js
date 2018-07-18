@@ -227,16 +227,21 @@ function addIssues(compressedIssues, selectedSubsystem) {
             });
     }
 
+    let dx = 0;
+    let dy = 0;
+    if (scale > 2) {
+        dx = (width / 2) - (width / scale);
+        dy = (height / 2) - (height / scale);
+        scale = 2;
+    }
+
     if (scale >= 1) {
-        if (scale > 2) {
-            zoom.scaleExtent([1, scale]);
-        } else {
-            zoom.scaleExtent([1, 2]);
-        }
+        zoom.scaleExtent([1, 2]);
     } else {
         zoom.scaleExtent([scale, 2]);
     }
-    const t = d3.zoomIdentity.scale(scale);
+
+    const t = d3.zoomIdentity.translate(dx, dy).scale(scale);
     zoom.transform(svg, t);
 }
 
