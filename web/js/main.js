@@ -72,7 +72,15 @@ function addIssues(compressedIssues, selectedSubsystem) {
         .size([width, height])
         .padding(function (d) {
             if (d === root) {
-                return RADIUS;
+                const numberOfIssues = compressedIssues.issues.length;
+                if (numberOfIssues === 1) {
+                    return 0;
+                } else if (numberOfIssues > 150) {
+                    return RADIUS;
+                } else {
+                    const n = 17 - Math.sqrt(numberOfIssues);
+                    return n * n;
+                }
             }
 
             return 0;
