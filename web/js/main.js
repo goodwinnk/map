@@ -271,7 +271,9 @@ IssueSelection.prototype.closePopup = function () {
     if (this.selected) {
         const oldPolygon = d3.select(this.selected);
         oldPolygon.classed("issue_selected", false);
-        oldPolygon.classed("issue_visited", true);
+
+        this.markVisited(this.selected);
+
         this.selected = null;
         this.selectedIssuePanel.style.display = "none";
     }
