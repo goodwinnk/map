@@ -60,6 +60,10 @@
             <button type="button" class="btn btn-default navbar-btn btn-sm" id="clear_visited_button">
                 Clear visited
             </button>
+            <button type="button" class="btn btn-default navbar-btn btn-sm" id="show_legend_button"
+                    onclick="document.getElementById('legend-panel').style.display = 'block'">
+                Legend
+            </button>
         </div>
     </div>
 </nav>
@@ -81,7 +85,33 @@
     </div>
 </div>
 
+<div class="panel_popup" id="legend-panel">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Legend
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                    onclick="document.getElementById('legend-panel').style.display = 'none'">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="panel-body">
+            <ul>
+                <li><img src="img/selected.png"> - selected issue</li>
+                <li><img src="img/years.png"> - number of years</li>
+                <li><img src="img/visited.png"> - visited issue</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div id="map" class="map"></div>
+
+<footer class="footer">
+    © <span id="copyright-year">2018</span>
+    <a href="https://github.com/goodwinnk">Nikolay Krasko</a>
+    <span>&nbsp;&nbsp;</span>
+    <a href="mailto:nikolay.krasko@gmail.com">Feedback</a>
+</footer>
 
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
 <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -94,6 +124,8 @@
     updateFilter();
     updateDate();
     loadIssues();
+
+    document.getElementById("copyright-year").innerText = (new Date()).getFullYear();
 </script>
 
 </body>

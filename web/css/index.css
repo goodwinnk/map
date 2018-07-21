@@ -26,6 +26,17 @@
     width: 600px;
 }
 
+.panel_popup {
+    margin: 10px auto 0;
+    display: none;
+    position: fixed;
+    clear: none;
+    left: 0;
+    right: 0;
+    top: 10px;
+    width: 600px;
+}
+
 .selected_issue_panel_field {
     margin-right: 30px;
 }
@@ -100,4 +111,20 @@
     vertical-align: middle;
     width: 100%;
     height: 100%;
+}
+
+.footer-push,
+.footer {
+    height: 30px;
+}
+
+.footer {
+    width: 100%;
+    color: #666;
+    font-size: small;
+    text-align: center;
+}
+
+.footer>a {
+    color: #666
 }
