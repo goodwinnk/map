@@ -110,6 +110,18 @@ function updateFilter() {
     document.getElementById("filter_selection").innerText = name;
 }
 
+function closeLegend(isGotIt) {
+    store.set("first.visit", "false");
+    document.getElementById('legend-panel').style.display = 'none';
+}
+
+function showLegend() {
+    if (store.get("first.visit") === "false") {
+        return;
+    }
+    document.getElementById('legend-panel').style.display = 'block';
+}
+
 function updateDate() {
     const list = document.getElementById("date_dropdown_menu");
     if (list) {
@@ -166,8 +178,6 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
     if (!list || !variantsObject) return;
 
     const variantsNameToId = {};
-    variantsNameToId["All"] = undefined;
-
     Object.entries(variantsObject).forEach(([key, value]) => {
         if (variantsCount !== undefined) {
             const count = variantsCount[key];
@@ -178,7 +188,12 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         variantsNameToId[value] = key;
     });
 
-    Object.keys(variantsNameToId).sort().forEach(function (key) {
+    let sortedNames = Object.keys(variantsNameToId).sort();
+
+    variantsNameToId["All"] = undefined;
+    sortedNames.unshift("All");
+
+    sortedNames.forEach(function (key) {
         const value = variantsNameToId[key];
         const a = document.createElement("a");
 

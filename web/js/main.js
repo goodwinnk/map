@@ -313,6 +313,7 @@ IssueSelection.prototype.fetchVisited = function (someId) {
 
 IssueSelection.prototype.clearVisited = function () {
     store.clearAll();
+    store.set("first.visit", "false");
     location.reload();
 };
 
