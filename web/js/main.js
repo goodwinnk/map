@@ -2,7 +2,7 @@ const SIZE = 20;
 const RADIUS = SIZE / 2 * Math.sqrt(2);
 const A2 = RADIUS / Math.cos(Math.PI / 6);
 const MILISECONDS_IN_YEAR = 31536000000;
-const HEXAGON_POINTS = hexagon(RADIUS);
+const HEXAGON_POINTS = hexagon();
 
 const VOTE_BASE_SIZE = 5;
 const VOTE_MAX = 200;
@@ -331,13 +331,41 @@ IssueSelection.prototype.markVisited = function (polygonNode) {
     oldPolygon.classed("issue_selected", false);
     oldPolygon.classed("issue_visited", true);
 
+    const lengthX = 3;
+    const lengthY = 4;
+    const margin = 0;
+
     d3.select(oldParent)
         .append("line")
         .attr("x1", 0)
-        .attr("y1", -A2 + 3)
+        .attr("y1", -A2 + margin)
         .attr("x2", 0)
-        .attr("y2", -A2 + 6)
-        .attr("class", "issue_visited");
+        .attr("y2", -A2 + margin + lengthY)
+        .attr("class", "issue_visited_inside");
+
+    d3.select(oldParent)
+        .append("line")
+        .attr("x1", 0)
+        .attr("y1", A2 - (margin + lengthY))
+        .attr("x2", 0)
+        .attr("y2", A2 - margin)
+        .attr("class", "issue_visited_inside");
+
+    d3.select(oldParent)
+        .append("line")
+        .attr("x1", RADIUS - (margin + lengthX))
+        .attr("y1", 0)
+        .attr("x2", RADIUS - margin)
+        .attr("y2", 0)
+        .attr("class", "issue_visited_inside");
+
+    d3.select(oldParent)
+        .append("line")
+        .attr("x1", -RADIUS + (margin + lengthX))
+        .attr("y1", 0)
+        .attr("x2", -RADIUS + margin)
+        .attr("y2", 0)
+        .attr("class", "issue_visited_inside");
 };
 
 IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
@@ -423,15 +451,15 @@ function zoomed() {
     mainG.attr("transform", event.transform);
 }
 
-function hexagon(r) {
+function hexagon() {
     let a = A2 / 2;
     return "" +
         0 + "," + (-A2) + " " +
-        r + "," + (-a) + " " +
-        r + "," + a + " " +
+        RADIUS + "," + (-a) + " " +
+        RADIUS + "," + a + " " +
         0 + "," + A2 + " " +
-        (-r) + "," + a + " " +
-        (-r) + "," + (-a);
+        (-RADIUS) + "," + a + " " +
+        (-RADIUS) + "," + (-a);
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {

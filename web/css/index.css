@@ -7,12 +7,17 @@
 
 .issue_selected {
     stroke: black;
-    stroke-width: 4px;
+    stroke-width: 3px;
 }
 
 .issue_visited {
-    stroke: white;
-    stroke-width: 4px;
+    stroke: darkred;
+    stroke-width: 3px;
+}
+
+.issue_visited_inside {
+    stroke: darkred;
+    stroke-width: 1px;
 }
 
 .selected_issue_panel {
