@@ -27,7 +27,9 @@ class IssueOverview(
 
 class CompressedIssues(
         val assignees: Map<Int, String>,
+        val users: Map<Int, String>,
         val subsystems: Map<Int, String>,
+        val subsystemFromQuery: Map<Int, Boolean>,
         val states: Map<Int, String>,
         val priorities: Map<Int, String>,
         val issues: Array<IssueOverviewMappedCompressed>
@@ -71,7 +73,7 @@ private fun <K, V> Map<K, V>.invert(): HashMap<V, K> {
     return inverted
 }
 
-fun compress(issues: Collection<IssueOverview>): CompressedIssues {
+fun compress(issues: Collection<IssueOverview>, subsystemFromQuery: (String) -> Boolean): CompressedIssues {
     val assigneeEncodeMap = HashMap<String, Int>()
     val stateEncodeMap = HashMap<String, Int>()
     val priorityEncodeMap = HashMap<String, Int>()
@@ -100,9 +102,19 @@ fun compress(issues: Collection<IssueOverview>): CompressedIssues {
         )
     }
 
+    val assignees: Map<Int, String> = assigneeEncodeMap.invert()
+
+    val subsystemsMap = subsystemEncodeMap.invert()
+    val subsystemFromQueryMap: Map<Int, Boolean> =
+            subsystemsMap
+                    .map { (id, name) -> id to subsystemFromQuery(name) }
+                    .toMap()
+
     return CompressedIssues(
-            assignees = assigneeEncodeMap.invert(),
-            subsystems = subsystemEncodeMap.invert(),
+            assignees = assignees,
+            users = assignees,
+            subsystems = subsystemsMap,
+            subsystemFromQuery = subsystemFromQueryMap,
             states = stateEncodeMap.invert(),
             priorities = priorityEncodeMap.invert(),
             issues = compressedIssues.toTypedArray()

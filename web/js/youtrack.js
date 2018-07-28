@@ -1,4 +1,4 @@
-const DATES = ["23.07.2018"];
+const DATES = ["28.07.2018"];
 const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
 const SUBSYSTEM_PARAM = "g";
@@ -152,28 +152,34 @@ function updateDate() {
  * @param {{subsystems:Map}} compressedIssues
  */
 function updateSubsystems(compressedIssues) {
-    let query = getParam("q");
-    if (query !== "all" && query !== "idea") return;
-
     document.getElementById("group_dropdown").style.display = "block";
+    let subsystemFromQuery = compressedIssues.subsystemFromQuery;
 
     fillFilter(
         compressedIssues.subsystems,
         compressedIssues.subsystemCount,
-        SUBSYSTEM_PARAM, [ASSIGNEE_PARAM],
-        "group_dropdown_menu");
+        SUBSYSTEM_PARAM,
+        [ASSIGNEE_PARAM],
+        "group_dropdown_menu",
+        function (selectionId, count) {
+            let isInQuery = subsystemFromQuery[selectionId] === true;
+            return isInQuery ? "(" + count + ")" : "(" + count + " - slice)";
+        }
+    );
     fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
 }
 
 function updateAssignees(compressedIssues) {
     fillFilter(
-        compressedIssues.assignees, compressedIssues.assigneeCount,
-        ASSIGNEE_PARAM, undefined,
+        compressedIssues.assignees,
+        compressedIssues.assigneeCount,
+        ASSIGNEE_PARAM,
+        undefined,
         "assignee_dropdown_menu");
     fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection");
 }
 
-function fillFilter(variantsObject, variantsCount, parameterName, clearParams, dropdownVariantsId) {
+function fillFilter(variantsObject, variantsCount, parameterName, clearParams, dropdownVariantsId, countTextFun) {
     let list = document.getElementById(dropdownVariantsId);
     if (!list || !variantsObject) return;
 
@@ -188,6 +194,12 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         variantsNameToId[value] = key;
     });
 
+    if (countTextFun === undefined) {
+        countTextFun = function (selectionId, count) {
+            return "(" + count + ")";
+        }
+    }
+
     let sortedNames = Object.keys(variantsNameToId).sort();
 
     variantsNameToId["All"] = undefined;
@@ -198,7 +210,7 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         const a = document.createElement("a");
 
         const count = variantsCount !== undefined ? variantsCount[value] : undefined;
-        const text = count === undefined ? key : key + " (" + count + ")";
+        const text = count === undefined ? key : key + " " + countTextFun(value, count);
 
         a.appendChild(document.createTextNode(text));
 

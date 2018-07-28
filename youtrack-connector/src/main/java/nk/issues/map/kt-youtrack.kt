@@ -14,25 +14,30 @@ import java.text.SimpleDateFormat
 data class IssuesRequest(
         val name: String,
         val filter: String,
+        val isSubsystemFromQuery: (String) -> Boolean,
         val fileName: String = "$name.json"
 )
 
 private val requests = listOf(
         IssuesRequest(
                 "idea-all",
-                "Project: IDEA #Unresolved"
+                "Project: IDEA #Unresolved",
+                { true }
         ),
         IssuesRequest(
                 "kt-all",
-                "Project: KT #Unresolved"
+                "Project: KT #Unresolved",
+                { true }
         ),
         IssuesRequest(
                 "kt-ide",
-                "Project: Kotlin #Unresolved Subsystems: {IDE*}"
+                "Project: Kotlin #Unresolved Subsystems: {IDE*}",
+                { it.startsWith("IDE") }
         ),
         IssuesRequest(
                 "kt-tools",
-                "Project: Kotlin #Unresolved Subsystems: {Tools*}"
+                "Project: Kotlin #Unresolved Subsystems: {Tools*}",
+                { it.startsWith("Tools")}
         ),
         IssuesRequest(
                 "kt-compiler",
@@ -42,7 +47,9 @@ private val requests = listOf(
                         "Subsystems: IR or " +
                         "Subsystems: {Language design} " +
                         "Subsystems: {Binary Metadata}" +
-                        ")"
+                        ")",
+                { it.startsWith("Backend") || it.startsWith("Frontend") ||
+                        it == "IR" || it == "Language design" || it == "Binary Metadata" }
         ),
         IssuesRequest(
                 "kt-other",
@@ -53,15 +60,21 @@ private val requests = listOf(
                         "Subsystems: -{Language design} " +
                         "Subsystems: -{IDE*} " +
                         "Subsystems: -{Tools*}" +
-                        "Subsystems: -{Binary Metadata}"
+                        "Subsystems: -{Binary Metadata}",
+                {
+                    !(it.startsWith("Backend") || it.startsWith("Frontend") ||
+                            it == "IR" || it == "Language design" || it == "Binary Metadata" ||
+                            it.startsWith("IDE") || it.startsWith("Tools"))
+                }
         ),
         IssuesRequest(
                 "kt-docs",
-                "Project: KT #Unresolved Subsystems: Docs"
+                "Project: KT #Unresolved Subsystems: Docs",
+                { it == "Docs" }
         )
 )
 
-private const val NUMBER_PER_REQUEST = 1000
+private const val NUMBER_PER_REQUEST = 2000
 
 fun main(args: Array<String>) {
     val today = Date()
@@ -119,7 +132,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
         Thread.sleep(100)
     }
 
-    val compressedIssues = compress(all)
+    val compressedIssues = compress(all, request.isSubsystemFromQuery)
 
     val output = File(dir, request.fileName)
     output.createNewFile()

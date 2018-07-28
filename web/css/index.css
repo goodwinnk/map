@@ -49,10 +49,6 @@
     pointer-events: none;
 }
 
-#group_dropdown {
-    display: none;
-}
-
 .unknown_priority {
     fill: #7e7d7e;
     stroke: white;
