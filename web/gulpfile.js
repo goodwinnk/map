@@ -15,7 +15,7 @@ gulp.task('dist', function () {
         './js/*.js',
         './img/*.png',
         './css/*.css',
-        './data/2018.07.23/*.json',
+        './data/2018.07.28/*.json',
         './bower_components/jquery/dist/jquery.min.js',
         './bower_components/bootstrap/dist/js/bootstrap.min.js',
         './bower_components/d3/d3.min.js',
