@@ -125,6 +125,11 @@ function addIssues(compressedIssues, selectedSubsystem) {
             return d.data.name;
         });
 
+    const groupNodes = groupNode.nodes();
+    if (groupNodes !== undefined && groupNodes.length > 0) {
+        issueSelection.lastGroupNode = groupNodes[groupNodes.length - 1];
+    }
+
     const node = mainG.selectAll(".issue")
         .data(root.leaves().sort(function (a, b) {
             const dy = a.y - b.y;
@@ -263,6 +268,7 @@ function IssueSelection(compressedIssues) {
     this.assigneeElement = document.getElementById("selected-issue-assignee");
 
     this.insertBefore = null;
+    this.lastGroupNode = null;
 
     this.selected = null;
 }
@@ -279,7 +285,40 @@ IssueSelection.prototype.closePopup = function () {
     }
 };
 
+IssueSelection.prototype.forget = function () {
+    if (this.selected) {
+        const oldPolygon = d3.select(this.selected);
+        oldPolygon.classed("issue_selected", false);
+
+        let issueId = oldPolygon.data()[0].data.id;
+        this.removeVisited(issueId);
+
+        this.markUnvisited(this.selected);
+
+        this.selected = null;
+        this.selectedIssuePanel.style.display = "none";
+    }
+
+    return false;
+};
+
 IssueSelection.prototype.updateVisited = function(issueId) {
+    let [key, visitedStr] = this.fetchKeyToBucketString(issueId);
+
+    const visited = visitedStr.split("\n");
+
+    if (!visited.includes(issueId)) {
+        visitedStr += issueId + "\n";
+        store.set(key, visitedStr);
+    }
+};
+
+IssueSelection.prototype.removeVisited = function(issueId) {
+    let [key, visitedStr] = this.fetchKeyToBucketString(issueId);
+    store.set(key, visitedStr.replace(issueId + "\n", ""));
+};
+
+IssueSelection.prototype.fetchKeyToBucketString = function (issueId) {
     let [prefix, number] = issueId.split("-");
     const key = prefix + Math.floor(parseInt(number) / 1000);
     let visitedStr = store.get(key);
@@ -287,11 +326,7 @@ IssueSelection.prototype.updateVisited = function(issueId) {
         visitedStr = "";
     }
 
-    const visited = visitedStr.split("\n");
-    if (!visited.includes(issueId)) {
-        visitedStr += issueId + "\n";
-        store.set(key, visitedStr);
-    }
+    return [key, visitedStr];
 };
 
 IssueSelection.prototype.fetchVisited = function (someId) {
@@ -366,6 +401,21 @@ IssueSelection.prototype.markVisited = function (polygonNode) {
         .attr("x2", -RADIUS + margin)
         .attr("y2", 0)
         .attr("class", "issue_visited_inside");
+};
+
+IssueSelection.prototype.markUnvisited = function (polygonNode) {
+    const oldParent = polygonNode.parentNode;
+    const oldGrand = oldParent.parentNode;
+
+    const oldPolygon = d3.select(polygonNode);
+    oldPolygon.classed("issue_selected", false);
+    oldPolygon.classed("issue_visited", false);
+
+    if (this.lastGroupNode != null) {
+        oldGrand.insertBefore(oldParent, this.lastGroupNode);
+    }
+
+    d3.select(oldParent).selectAll(".issue_visited_inside").remove();
 };
 
 IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
