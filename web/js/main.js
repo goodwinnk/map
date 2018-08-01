@@ -412,7 +412,7 @@ IssueSelection.prototype.markUnvisited = function (polygonNode) {
     oldPolygon.classed("issue_visited", false);
 
     if (this.lastGroupNode != null) {
-        oldGrand.insertBefore(oldParent, this.lastGroupNode);
+        oldGrand.insertBefore(oldParent, this.lastGroupNode.nextSibling);
     }
 
     d3.select(oldParent).selectAll(".issue_visited_inside").remove();
