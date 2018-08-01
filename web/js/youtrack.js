@@ -163,7 +163,7 @@ function updateSubsystems(compressedIssues) {
         "group_dropdown_menu",
         function (selectionId, count) {
             let isInQuery = subsystemFromQuery[selectionId] === true;
-            return isInQuery ? "(" + count + ")" : "(" + count + " - slice)";
+            return isInQuery ? "(" + count + ")" : "(filtered " + count + ")";
         }
     );
     fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
