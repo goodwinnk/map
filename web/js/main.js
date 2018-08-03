@@ -25,7 +25,7 @@ const svg = d3.select("#map")
 const mainG = svg.append("g");
 let issueSelection = null;
 
-function addIssues(compressedIssues, selectedSubsystem) {
+function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, selectedGrouping) {
     issueSelection = new IssueSelection(compressedIssues);
     document.getElementById("clear_visited_button").onclick = issueSelection.clearVisited;
 
@@ -45,9 +45,22 @@ function addIssues(compressedIssues, selectedSubsystem) {
     const votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    const issuesWithSubsystems = splitToSubsystems(compressedIssues, selectedSubsystem);
-
-    const root = d3.hierarchy(issuesWithSubsystems)
+    let groupedIssues;
+    if (selectedGrouping === "a") {
+        groupedIssues = splitToGroups(
+            compressedIssues,
+            selectedAssignee,
+            function(issue) { return [issue.a]; },
+            function(ci, ss) { return decodeAssignee(ci, ss); });    
+    } else {
+        groupedIssues = splitToGroups(
+            compressedIssues,
+            selectedSubsystem,
+            function(issue) { return issue.ss; },
+            function(ci, ss) { return decodeSubsystem(ci, ss); });
+    }
+    
+    const root = d3.hierarchy(groupedIssues)
         .sort(function (a, b) {
             let aIsChild = a.data.children === undefined;
             let bIsChild = b.data.children === undefined;
@@ -460,39 +473,42 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
 /**
  *
  * @param {{issues:Array()}}compressedIssues
- * @param selectedSubsystem
+ * @param groupSelector
+ * @param selectedGroup
+ * @param groupPresenter
  * @return {{children}}
  */
-function splitToSubsystems(compressedIssues, selectedSubsystem) {
+function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPresenter) {
     const issues = compressedIssues.issues;
-    const subsystemNodes = {};
+    const groupNodes = {};
 
     for (let i = 0; i < issues.length; i++) {
         const issue = issues[i];
-        const subsystems = issue.ss;
-        for (let s = 0; s < subsystems.length; s++) {
-            const subsystem = subsystems[s];
-            if (selectedSubsystem !== undefined && selectedSubsystem !== null) {
-                if (selectedSubsystem !== subsystem) {
+        const issueGroups = groupSelector(issue);
+        
+        for (let s = 0; s < issueGroups.length; s++) {
+            const group = issueGroups[s];
+            if (selectedGroup !== undefined && selectedGroup !== null) {
+                if (selectedGroup !== group) {
                     continue;
                 }
             }
 
-            let subsystemNode = subsystemNodes[subsystem];
-            if (typeof subsystemNode === "undefined") {
-                subsystemNode = {
+            let groupNode = groupNodes[group];
+            if (typeof groupNode === "undefined") {
+                groupNode = {
                     children: [],
-                    name: decodeSubsystem(compressedIssues, subsystem)
+                    name: groupPresenter(compressedIssues, group) 
                 };
-                subsystemNodes[subsystem] = subsystemNode;
+                groupNodes[group] = groupNode;
             }
 
-            subsystemNode.children.push(issue);
+            groupNode.children.push(issue);
         }
     }
 
     return {
-        children: d3.values(subsystemNodes)
+        children: d3.values(groupNodes)
     };
 }
 

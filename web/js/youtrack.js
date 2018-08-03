@@ -1,7 +1,8 @@
 const DATES = ["28.07.2018"];
 const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
-const SUBSYSTEM_PARAM = "g";
+const GROUP_PARAM = "g";
+const SUBSYSTEM_PARAM = "s";
 
 let queryDict = null;
 
@@ -28,7 +29,7 @@ function getDate() {
     return DATES[0];
 }
 
-function getGroup() {
+function getSubsystem() {
     let groupStr = getParam(SUBSYSTEM_PARAM);
     if (groupStr) {
         let groupInt = parseInt(groupStr);
@@ -54,6 +55,10 @@ function getAssignee() {
     }
 }
 
+function getGrouping() {
+    return getParam(GROUP_PARAM);
+}
+
 /**
  * @param dateStr date string in dd.MM.YYYY format
  * @return date string in YYYY.MM.dd format
@@ -64,7 +69,7 @@ function dateDir(dateStr) {
 }
 
 function fileName() {
-    const query = getParam("q");
+    const query = getParam(QUERY_PARAM);
     if (query) {
         if (query === "all") {
             return "kt-all.json";
@@ -86,9 +91,20 @@ function fileName() {
     return "kt-compiler.json";
 }
 
+function updateGrouping() {
+    const grouping = getParam(GROUP_PARAM);
+    let name = "Subsystem";
+    if (grouping === "a") {
+        name = "Assignee";
+    } else if (grouping === "ss") {
+        name = "Subsystems";
+    }
+    document.getElementById("group_selection").innerText = name;
+}
+
 function updateFilter() {
     let name = "Compiler";
-    const query = getParam("q");
+    const query = getParam(QUERY_PARAM);
     if (query) {
         if (query === "all") {
             name = "All";
@@ -152,7 +168,7 @@ function updateDate() {
  * @param {{subsystems:Map}} compressedIssues
  */
 function updateSubsystems(compressedIssues) {
-    document.getElementById("group_dropdown").style.display = "block";
+    document.getElementById("subsystem_dropdown").style.display = "block";
     let subsystemFromQuery = compressedIssues.subsystemFromQuery;
 
     fillFilter(
@@ -160,13 +176,13 @@ function updateSubsystems(compressedIssues) {
         compressedIssues.subsystemCount,
         SUBSYSTEM_PARAM,
         [ASSIGNEE_PARAM],
-        "group_dropdown_menu",
+        "subsystem_dropdown_menu",
         function (selectionId, count) {
             let isInQuery = subsystemFromQuery[selectionId] === true;
             return isInQuery ? "(" + count + ")" : "(filtered " + count + ")";
         }
     );
-    fillFilterSelection(compressedIssues.subsystems, getGroup(), "group_selection");
+    fillFilterSelection(compressedIssues.subsystems, getSubsystem(), "subsystem_selection");
 }
 
 function updateAssignees(compressedIssues) {
@@ -247,13 +263,13 @@ function loadIssues() {
             updateSubsystems(updatedData);
             updateAssignees(updatedData);
             // document.getElementById("map").innerText = "";
-            addIssues(updatedData, getGroup());
+            addIssues(updatedData, getSubsystem(), getAssignee(), getGrouping());
         }
     });
 }
 
 function filterIssues(compressedIssues) {
-    const subsystem = getGroup();
+    const subsystem = getSubsystem();
     const assignee = getAssignee();
 
     const subsystemCount = {};
@@ -351,5 +367,10 @@ function hrefParam(key, value, clearParams) {
 
 function queryHref(value) {
     hrefParam(QUERY_PARAM, value, [SUBSYSTEM_PARAM, ASSIGNEE_PARAM]);
+    return false;
+}
+
+function groupingHref(value) {
+    hrefParam(GROUP_PARAM, value, []);
     return false;
 }
