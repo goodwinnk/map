@@ -183,8 +183,8 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         }
     }
 
-    let sortedNames = Object.keys(variantsNameToId).sort(function (a, b) {
-        return a.toLowerCase().localeCompare(b.toLowerCase());
+    let sortedNames = Object.keys(variantsNameToId).sort(function(a,b){
+        return variantsCount[variantsNameToId[b]] - variantsCount[variantsNameToId[a]];
     });
 
     if (undefinedItem !== undefined && variantsCount !== undefined && variantsCount[UNSPECIFIED_VALUE] !== undefined) {
