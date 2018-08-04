@@ -2,4 +2,5 @@
 .idea/tasks.xml
 bower_components
 node_modules
-data/*.json
+data
+web
