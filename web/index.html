@@ -31,25 +31,25 @@
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Filter: <span id="filter_selection">All</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="?q=all" onclick="queryHref('all')">All</a></li>
-                        <li><a href="?q=ide" onclick="queryHref('ide')">IDE</a></li>
-                        <li><a href="?q=tools" onclick="queryHref('tools')">Tools</a></li>
-                        <li><a href="?q=compiler" onclick="queryHref(undefined)">Compiler</a></li>
-                        <li><a href="?q=other" onclick="queryHref('other')">Other</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Group: <span id="group_selection">Subsystem</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a onclick="groupingHref('ss')">Subsystem</a></li>
+                        <li><a onclick="groupingHref(undefined)">Subsystem</a></li>
                         <li><a onclick="groupingHref('a')">Assignee</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Filter: <span id="filter_selection">All</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="queryHref('all')">All</a></li>
+                        <li><a onclick="queryHref('ide')">IDE</a></li>
+                        <li><a onclick="queryHref('tools')">Tools</a></li>
+                        <li><a onclick="queryHref(undefined)">Compiler</a></li>
+                        <li><a onclick="queryHref('other')">Other</a></li>
                     </ul>
                 </li>
                 <li class="dropdown" id="subsystem_dropdown">
