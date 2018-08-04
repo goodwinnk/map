@@ -140,11 +140,12 @@
 <script type="text/javascript">
     updateFilter();
     updateGrouping();
-    updateDate();
     loadIssues();
     showLegend();
 
-    document.getElementById("copyright-year").innerText = (new Date()).getFullYear();
+    let today = new Date();
+    document.getElementById("date_selection").innerText = "" + today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+    document.getElementById("copyright-year").innerText = today.getFullYear();
 </script>
 
 </body>

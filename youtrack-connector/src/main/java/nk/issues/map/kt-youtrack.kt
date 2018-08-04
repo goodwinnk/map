@@ -78,8 +78,16 @@ private const val NUMBER_PER_REQUEST = 2000
 
 fun main(args: Array<String>) {
     val today = Date()
+
+    val dataDir = File("web/data")
+    dataDir.mkdir()
+    val dataFile = File(dataDir, "data.json")
+    dataFile.createNewFile()
+    val lastStr = SimpleDateFormat("dd.MM.yyyy").format(today)
+    dataFile.writeText("""{ "last": "$lastStr" }""")
+
     val dirName = SimpleDateFormat("yyyy.MM.dd").format(today)
-    val dir = File("web/data/$dirName")
+    val dir = File(dataDir, dirName)
     dir.mkdir()
 
     for (request in requests) {

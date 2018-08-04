@@ -1,4 +1,3 @@
-const DATES = ["28.07.2018"];
 const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
 const GROUP_PARAM = "g";
@@ -18,15 +17,15 @@ function getParam(paramName) {
     return queryDict[paramName]
 }
 
-function getDate() {
+function getDate(dates) {
     const date = getParam("d");
     if (date) {
-        if (DATES.includes(date)) {
+        if (dates.includes(date)) {
             return date;
         }
     }
 
-    return DATES[0];
+    return dates[0];
 }
 
 function getSubsystem() {
@@ -138,30 +137,8 @@ function showLegend() {
     document.getElementById('legend-panel').style.display = 'block';
 }
 
-function updateDate() {
-    const list = document.getElementById("date_dropdown_menu");
-    if (list) {
-        for (let i = 0; i < DATES.length; i++) {
-            const dateStr = DATES[i];
-
-            const a = document.createElement("a");
-            a.appendChild(document.createTextNode(dateStr));
-            a.href = "?d=" + dateStr;
-            a.onclick = (function (value) {
-                return function () {
-                    hrefParam("d", value);
-                    return false;
-                }
-            })(dateStr);
-
-            const item = document.createElement("li");
-            item.appendChild(a);
-
-            list.appendChild(item);
-        }
-    }
-
-    document.getElementById("date_selection").innerText = getDate();
+function updateDate(dates) {
+    document.getElementById("date_selection").innerText = getDate(dates);
 }
 
 /**
@@ -254,18 +231,25 @@ function fillFilterSelection(variantsObject, currentValue, dropdownSelectionId) 
 }
 
 function loadIssues() {
-    d3.json("data/" + dateDir(getDate()) + "/" + fileName()).then(function (data) {
-        const title = document.getElementById("issue_title");
-        if (undefined === data) {
-            title.innerHTML = "No Data";
-        } else {
-            const updatedData = filterIssues(data);
-            updateSubsystems(updatedData);
-            updateAssignees(updatedData);
-            // document.getElementById("map").innerText = "";
-            addIssues(updatedData, getSubsystem(), getAssignee(), getGrouping());
-        }
+    d3.json("data/data.json").then(function (data) {
+        let last = data.last;
+        let dates = [last];
+        updateDate(dates);
+
+        d3.json("data/" + dateDir(getDate(dates)) + "/" + fileName()).then(function (data) {
+            const title = document.getElementById("issue_title");
+            if (undefined === data) {
+                title.innerHTML = "No Data";
+            } else {
+                const updatedData = filterIssues(data);
+                updateSubsystems(updatedData);
+                updateAssignees(updatedData);
+                // document.getElementById("map").innerText = "";
+                addIssues(updatedData, getSubsystem(), getAssignee(), getGrouping());
+            }
+        });
     });
+
 }
 
 function filterIssues(compressedIssues) {
