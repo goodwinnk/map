@@ -45,18 +45,28 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     const votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    let groupedIssues = selectedGrouping === "a" ?
-        splitToGroups(
+    let groupedIssues;
+    if (selectedGrouping === "a") {
+        groupedIssues = splitToGroups(
             compressedIssues,
             selectedAssignee,
-            function (issue) { return [issue.a]; },
-            function (ci, ss) { return decodeAssignee(ci, ss); })
-    :
-        splitToGroups(
+            function (issue) {
+                return [issue.a];
+            },
+            function (ci, ss) {
+                return decodeAssignee(ci, ss);
+            });
+    } else {
+        groupedIssues = splitToGroups(
             compressedIssues,
             selectedSubsystem,
-            function (issue) { return issue.ss; },
-            function (ci, ss) { return decodeSubsystem(ci, ss); });
+            function (issue) {
+                return issue.ss;
+            },
+            function (ci, ss) {
+                return decodeSubsystem(ci, ss);
+            });
+    }
     
     const root = d3.hierarchy(groupedIssues)
         .sort(function (a, b) {
@@ -490,12 +500,14 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
         for (let index = 0; index < issueGroups.length; index++) {
             let group = issueGroups[index];
             if (selectedGroup !== undefined && selectedGroup !== null) {
-                if (selectedGroup === -1) {
-                    if (group !== undefined)
+                if (selectedGroup === UNSPECIFIED_VALUE) {
+                    if (group !== undefined) {
                         continue;
-                } else
-                if (selectedGroup !== group) {
-                    continue;
+                    }
+                } else {
+                    if (selectedGroup !== group) {
+                        continue;
+                    }
                 }
             }
 

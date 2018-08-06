@@ -2,6 +2,7 @@ const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
 const GROUP_PARAM = "g";
 const SUBSYSTEM_PARAM = "s";
+const UNSPECIFIED_VALUE = -1;
 
 let queryDict = null;
 
@@ -30,20 +31,12 @@ function getDate(dates) {
 
 function getSubsystem() {
     let groupStr = getParam(SUBSYSTEM_PARAM);
-    if (groupStr) {
-        return parseInt(groupStr);
-    } else {
-        return undefined;
-    }
+    return groupStr ? parseInt(groupStr) : undefined;
 }
 
 function getAssignee() {
     let groupStr = getParam(ASSIGNEE_PARAM);
-    if (groupStr) {
-        return parseInt(groupStr);
-    } else {
-        return undefined;
-    }
+    return groupStr ? parseInt(groupStr) : undefined;
 }
 
 function getGrouping() {
@@ -152,7 +145,7 @@ function updateSubsystems(compressedIssues) {
         "subsystem_dropdown_menu",
         function (selectionId, count) {
             let isInQuery = subsystemFromQuery[selectionId] === true;
-            return isInQuery || selectionId === -1 ? "(" + count + ")" : "(filtered " + count + ")";
+            return isInQuery || selectionId === UNSPECIFIED_VALUE ? "(" + count + ")" : "(filtered " + count + ")";
         },
         "Unspecified"
     );
@@ -193,7 +186,7 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
     let sortedNames = Object.keys(variantsNameToId).sort();
 
     if (undefinedItem !== undefined) {
-        variantsNameToId[undefinedItem] = -1;
+        variantsNameToId[undefinedItem] = UNSPECIFIED_VALUE;
         sortedNames.unshift(undefinedItem);
     }
 
@@ -226,9 +219,9 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
 function fillFilterSelection(variantsObject, currentValue, dropdownSelectionId, undefinedItem) {
     let groupName = variantsObject[currentValue];
     if (!groupName) {
-        if (currentValue === -1)
+        if (currentValue === UNSPECIFIED_VALUE)
             groupName = undefinedItem;
-        else 
+        else
             groupName = "All"
     }
 
@@ -272,41 +265,39 @@ function filterIssues(compressedIssues) {
         const subsystems = issue.ss;
 
         if (subsystems.length === 0) {
-            if (subsystemCount[-1] === undefined) {
-                subsystemCount[-1] = 0;
+            if (subsystemCount[UNSPECIFIED_VALUE] === undefined) {
+                subsystemCount[UNSPECIFIED_VALUE] = 0;
             }
-            subsystemCount[-1]++;
-        } else
-        for (let s = 0; s < subsystems.length; s++) {
-            const issueSubsystem = subsystems[s];
-            if (subsystemCount[issueSubsystem] === undefined) {
-                subsystemCount[issueSubsystem] = 0;
-            }
+            subsystemCount[UNSPECIFIED_VALUE]++;
+        } else {
+            for (let s = 0; s < subsystems.length; s++) {
+                const issueSubsystem = subsystems[s];
+                if (subsystemCount[issueSubsystem] === undefined) {
+                    subsystemCount[issueSubsystem] = 0;
+                }
 
-            subsystemCount[issueSubsystem]++;
+                subsystemCount[issueSubsystem]++;
+            }
         }
 
-        if (subsystemFilter === -1) {
-            if (subsystems.length > 0)
+        if (subsystemFilter === UNSPECIFIED_VALUE) {
+            if (subsystems.length > 0) {
                 continue
-        } else if (subsystemFilter !== undefined && subsystemFilter !== null) {
-            if (!subsystems.includes(subsystemFilter)) {
-                continue;
             }
+        } else if (subsystemFilter !== undefined && !subsystems.includes(subsystemFilter)) {
+            continue;
         }
 
         const issueAssignee = issue.a;
-        let assigneeId = issueAssignee !== undefined ? issueAssignee : -1;
+        let assigneeId = issueAssignee !== undefined ? issueAssignee : UNSPECIFIED_VALUE;
 
         if (assigneeCount[assigneeId] === undefined) {
             assigneeCount[assigneeId] = 0;
         }
         assigneeCount[assigneeId]++;
 
-        if (assigneeFilter !== undefined && assigneeFilter !== null) {
-            if (assigneeFilter !== assigneeId) {
-                continue;
-            }
+        if (assigneeFilter !== undefined && assigneeFilter !== assigneeId) {
+            continue;
         }
 
         filteredIssues.push(issue);
