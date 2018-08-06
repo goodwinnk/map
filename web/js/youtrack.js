@@ -84,6 +84,8 @@ function fileName() {
             return "kt-docs.json";
         } else if (query === "idea") {
             return "idea-all.json";
+        } else if (query === "rsrp") {
+            return "resharper-all.json";
         }
     }
 
@@ -118,7 +120,9 @@ function updateFilter() {
         } else if (query === "docs") {
             name = "Docs";
         } else if (query === "idea") {
-            name = "IDEA all (Bonus)"
+            name = "IDEA All (Bonus)"
+        }else if (query === "rsrp") {
+            name = "ReSharper All (Bonus)"
         }
     }
 

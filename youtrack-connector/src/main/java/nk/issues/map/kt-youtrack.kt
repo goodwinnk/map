@@ -20,6 +20,11 @@ data class IssuesRequest(
 
 private val requests = listOf(
         IssuesRequest(
+                "resharper-all",
+                "Project: RSRP #Unresolved",
+                { true }
+        ),
+        IssuesRequest(
                 "idea-all",
                 "Project: IDEA #Unresolved",
                 { true }
