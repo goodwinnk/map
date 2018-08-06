@@ -183,7 +183,9 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         }
     }
 
-    let sortedNames = Object.keys(variantsNameToId).sort();
+    let sortedNames = Object.keys(variantsNameToId).sort(function (a, b) {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
 
     if (undefinedItem !== undefined) {
         variantsNameToId[undefinedItem] = UNSPECIFIED_VALUE;
