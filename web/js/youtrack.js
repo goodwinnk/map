@@ -31,26 +31,18 @@ function getDate(dates) {
 function getSubsystem() {
     let groupStr = getParam(SUBSYSTEM_PARAM);
     if (groupStr) {
-        let groupInt = parseInt(groupStr);
-        if (groupInt === -1) {
-            return null;
-        }
-        return groupInt;
+        return parseInt(groupStr);
     } else {
-        return null;
+        return undefined;
     }
 }
 
 function getAssignee() {
     let groupStr = getParam(ASSIGNEE_PARAM);
     if (groupStr) {
-        let groupInt = parseInt(groupStr);
-        if (groupInt === -1) {
-            return null;
-        }
-        return groupInt;
+        return parseInt(groupStr);
     } else {
-        return null;
+        return undefined;
     }
 }
 
@@ -160,10 +152,11 @@ function updateSubsystems(compressedIssues) {
         "subsystem_dropdown_menu",
         function (selectionId, count) {
             let isInQuery = subsystemFromQuery[selectionId] === true;
-            return isInQuery ? "(" + count + ")" : "(filtered " + count + ")";
-        }
+            return isInQuery || selectionId === -1 ? "(" + count + ")" : "(filtered " + count + ")";
+        },
+        "Unspecified"
     );
-    fillFilterSelection(compressedIssues.subsystems, getSubsystem(), "subsystem_selection");
+    fillFilterSelection(compressedIssues.subsystems, getSubsystem(), "subsystem_selection", "Unspecified");
 }
 
 function updateAssignees(compressedIssues) {
@@ -172,11 +165,11 @@ function updateAssignees(compressedIssues) {
         compressedIssues.assigneeCount,
         ASSIGNEE_PARAM,
         undefined,
-        "assignee_dropdown_menu");
-    fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection");
+        "assignee_dropdown_menu", undefined, "Unassigned");
+    fillFilterSelection(compressedIssues.assignees, getAssignee(), "assignee_selection", "Unassigned");
 }
 
-function fillFilter(variantsObject, variantsCount, parameterName, clearParams, dropdownVariantsId, countTextFun) {
+function fillFilter(variantsObject, variantsCount, parameterName, clearParams, dropdownVariantsId, countTextFun, undefinedItem) {
     let list = document.getElementById(dropdownVariantsId);
     if (!list || !variantsObject) return;
 
@@ -199,9 +192,14 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
 
     let sortedNames = Object.keys(variantsNameToId).sort();
 
+    if (undefinedItem !== undefined) {
+        variantsNameToId[undefinedItem] = -1;
+        sortedNames.unshift(undefinedItem);
+    }
+
     variantsNameToId["All"] = undefined;
     sortedNames.unshift("All");
-
+    
     sortedNames.forEach(function (key) {
         const value = variantsNameToId[key];
         const a = document.createElement("a");
@@ -225,10 +223,13 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
     });
 }
 
-function fillFilterSelection(variantsObject, currentValue, dropdownSelectionId) {
+function fillFilterSelection(variantsObject, currentValue, dropdownSelectionId, undefinedItem) {
     let groupName = variantsObject[currentValue];
     if (!groupName) {
-        groupName = "All"
+        if (currentValue === -1)
+            groupName = undefinedItem;
+        else 
+            groupName = "All"
     }
 
     document.getElementById(dropdownSelectionId).innerText = groupName;
@@ -257,8 +258,8 @@ function loadIssues() {
 }
 
 function filterIssues(compressedIssues) {
-    const subsystem = getSubsystem();
-    const assignee = getAssignee();
+    const subsystemFilter = getSubsystem();
+    const assigneeFilter = getAssignee();
 
     const subsystemCount = {};
     const assigneeCount = {};
@@ -270,6 +271,12 @@ function filterIssues(compressedIssues) {
         const issue = issues[i];
         const subsystems = issue.ss;
 
+        if (subsystems.length === 0) {
+            if (subsystemCount[-1] === undefined) {
+                subsystemCount[-1] = 0;
+            }
+            subsystemCount[-1]++;
+        } else
         for (let s = 0; s < subsystems.length; s++) {
             const issueSubsystem = subsystems[s];
             if (subsystemCount[issueSubsystem] === undefined) {
@@ -279,23 +286,25 @@ function filterIssues(compressedIssues) {
             subsystemCount[issueSubsystem]++;
         }
 
-        if (subsystem !== undefined && subsystem !== null) {
-            if (!subsystems.includes(subsystem)) {
+        if (subsystemFilter === -1) {
+            if (subsystems.length > 0)
+                continue
+        } else if (subsystemFilter !== undefined && subsystemFilter !== null) {
+            if (!subsystems.includes(subsystemFilter)) {
                 continue;
             }
         }
 
         const issueAssignee = issue.a;
-        if (issueAssignee !== undefined) {
-            if (assigneeCount[issueAssignee] === undefined) {
-                assigneeCount[issueAssignee] = 0;
-            }
+        let assigneeId = issueAssignee !== undefined ? issueAssignee : -1;
 
-            assigneeCount[issueAssignee]++;
+        if (assigneeCount[assigneeId] === undefined) {
+            assigneeCount[assigneeId] = 0;
         }
+        assigneeCount[assigneeId]++;
 
-        if (assignee !== undefined && assignee !== null) {
-            if (assignee !== issueAssignee) {
+        if (assigneeFilter !== undefined && assigneeFilter !== null) {
+            if (assigneeFilter !== assigneeId) {
                 continue;
             }
         }

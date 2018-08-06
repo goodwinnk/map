@@ -45,20 +45,18 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     const votesLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
-    let groupedIssues;
-    if (selectedGrouping === "a") {
-        groupedIssues = splitToGroups(
+    let groupedIssues = selectedGrouping === "a" ?
+        splitToGroups(
             compressedIssues,
             selectedAssignee,
-            function(issue) { return [issue.a]; },
-            function(ci, ss) { return decodeAssignee(ci, ss); });    
-    } else {
-        groupedIssues = splitToGroups(
+            function (issue) { return [issue.a]; },
+            function (ci, ss) { return decodeAssignee(ci, ss); })
+    :
+        splitToGroups(
             compressedIssues,
             selectedSubsystem,
-            function(issue) { return issue.ss; },
-            function(ci, ss) { return decodeSubsystem(ci, ss); });
-    }
+            function (issue) { return issue.ss; },
+            function (ci, ss) { return decodeSubsystem(ci, ss); });
     
     const root = d3.hierarchy(groupedIssues)
         .sort(function (a, b) {
@@ -484,11 +482,18 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
 
     for (let i = 0; i < issues.length; i++) {
         const issue = issues[i];
-        const issueGroups = groupSelector(issue);
+        let issueGroups = groupSelector(issue);
+        if (issueGroups === undefined || issueGroups.length === 0) {
+            issueGroups = [undefined]
+        }
         
-        for (let s = 0; s < issueGroups.length; s++) {
-            const group = issueGroups[s];
+        for (let index = 0; index < issueGroups.length; index++) {
+            let group = issueGroups[index];
             if (selectedGroup !== undefined && selectedGroup !== null) {
+                if (selectedGroup === -1) {
+                    if (group !== undefined)
+                        continue;
+                } else
                 if (selectedGroup !== group) {
                     continue;
                 }
@@ -535,6 +540,7 @@ function decodeSubsystems(compressedIssues, subsystems) {
 }
 
 function decodeSubsystem(compressedIssues, subsystem) {
+    if (subsystem === undefined) return "Unspecified";
     return compressedIssues.subsystems[subsystem];
 }
 
