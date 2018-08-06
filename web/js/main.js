@@ -539,12 +539,12 @@ function decodeSubsystem(compressedIssues, subsystem) {
 }
 
 function decodeAssignee(compressedIssues, assignee) {
-    if (!assignee) return "Unassigned";
+    if (assignee === null || assignee === undefined)  return "Unassigned";
     return compressedIssues.assignees[assignee];
 }
 
 function decodePriority(compressedIssues, priority) {
-    if (!priority) return "No Priority";
+    if (priority === null || priority === undefined) return "No Priority";
     return compressedIssues.priorities[priority];
 }
 
