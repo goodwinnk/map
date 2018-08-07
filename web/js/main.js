@@ -509,7 +509,7 @@ function priorityVoteAgeHeatFunction(d) {
     let p = d.data.p;
     if (p === undefined)
         return 1;
-    return Math.pow(1.9, p + 1);
+    return Math.pow(2.5, p + 1);
 }
 
 function priorityVoteAgeOrderFunction(a, b) {
