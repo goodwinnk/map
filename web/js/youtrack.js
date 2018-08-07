@@ -2,6 +2,7 @@ const ASSIGNEE_PARAM = "assignee";
 const QUERY_PARAM = "q";
 const GROUP_PARAM = "g";
 const SUBSYSTEM_PARAM = "s";
+const HEAT_PARAM = "h";
 const UNSPECIFIED_VALUE = -1;
 
 let queryDict = null;
@@ -41,6 +42,10 @@ function getAssignee() {
 
 function getGrouping() {
     return getParam(GROUP_PARAM);
+}
+
+function getHeat() {
+    return getParam(HEAT_PARAM);
 }
 
 /**
@@ -86,6 +91,17 @@ function updateGrouping() {
         name = "Subsystems";
     }
     document.getElementById("group_selection").innerText = name;
+}
+
+function updateHeat() {
+    const heat = getParam(HEAT_PARAM);
+    let name = "Votes";
+    if (heat === "age") {
+        name = "Age";
+    } else if (heat === "priority") {
+        name = "Priority";
+    } 
+    document.getElementById("heat_selection").innerText = name;
 }
 
 function updateFilter() {
@@ -245,7 +261,7 @@ function loadIssues() {
                 updateSubsystems(updatedData);
                 updateAssignees(updatedData);
                 // document.getElementById("map").innerText = "";
-                addIssues(updatedData, getSubsystem(), getAssignee(), getGrouping());
+                addIssues(updatedData, getSubsystem(), getAssignee(), getGrouping(), getHeat());
             }
         });
     });
@@ -362,5 +378,10 @@ function queryHref(value) {
 
 function groupingHref(value) {
     hrefParam(GROUP_PARAM, value, []);
+    return false;
+}
+
+function heatHref(value) {
+    hrefParam(HEAT_PARAM, value, []);
     return false;
 }

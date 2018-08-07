@@ -25,7 +25,7 @@ const svg = d3.select("#map")
 const mainG = svg.append("g");
 let issueSelection = null;
 
-function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, selectedGrouping) {
+function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, selectedGrouping, selectedHeat) {
     issueSelection = new IssueSelection(compressedIssues);
     document.getElementById("clear_visited_button").onclick = issueSelection.clearVisited;
 
@@ -42,7 +42,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         .range(coloursRainbow)
         .interpolate(d3.interpolateHcl);
 
-    const votesLogScale = d3.scaleLog()
+    const valueLogScale = d3.scaleLog()
         .domain([1, VOTE_MAX + 1]);
 
     let groupedIssues;
@@ -67,6 +67,21 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
                 return decodeSubsystem(ci, ss);
             });
     }
+
+    
+    let orderFunction;
+    let heatFunction;
+    
+    if (selectedHeat === "age") {
+        orderFunction = ageOrderFunction;
+        heatFunction = ageHeatFunction;
+    } else if (selectedHeat === "priority") {
+        orderFunction = priorityVoteAgeOrderFunction;
+        heatFunction = priorityVoteAgeHeatFunction;
+    } else {
+        orderFunction = voteAgeOrderFunction;
+        heatFunction = voteAgeHeatFunction;
+    }
     
     const root = d3.hierarchy(groupedIssues)
         .sort(function (a, b) {
@@ -74,11 +89,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             let bIsChild = b.data.children === undefined;
 
             if (aIsChild && bIsChild) {
-                if (b.data.v !== a.data.v) {
-                    return b.data.v - a.data.v;
-                }
-
-                return a.data.c - b.data.c;
+                return orderFunction(a,b)
             }
 
             if (!aIsChild && !bIsChild) {
@@ -179,20 +190,12 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
-            let votes = d.data.v;
-            if (!votes) {
-                votes = 0;
-            }
-
-            votes += 1;
-
-            return colorScaleRainbow(votesLogScale(votes));
+            return colorScaleRainbow(valueLogScale(heatFunction(d)));
         })
         .on("click", function (d) {
             issueSelection.selectIssue(this, d);
         });
 
-    const today = Date.now();
     for (let i = 1; i <= 5; i++) {
         const numberOfYears = i;
         const yearRadius = RADIUS / 6 * (6 - numberOfYears);
@@ -477,6 +480,49 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
     this.statusElement.innerText = decodeState(this.compressedIssues, data.st);
     this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
 };
+
+function voteAgeHeatFunction(d) {
+    let votes = d.data.v;
+    if (!votes) 
+        return 1;
+    return votes + 1;
+}
+
+function voteAgeOrderFunction(a, b) {
+    let av = a.data.v;
+    let bv = b.data.v;
+    if (bv !== av)
+        return (bv ? bv : 0) - (av ? av : 0);
+
+    return a.data.c - b.data.c;
+}
+
+function ageHeatFunction(d) {
+    return Math.pow(1.7, Math.abs(d.data.c - today) / MILISECONDS_IN_YEAR);
+}
+
+function ageOrderFunction(a, b) {
+    return a.data.c - b.data.c;
+}
+
+function priorityVoteAgeHeatFunction(d) {
+    let p = d.data.p;
+    if (p === undefined)
+        return 1;
+    return Math.pow(1.9, p + 1);
+}
+
+function priorityVoteAgeOrderFunction(a, b) {
+    let ap = a.data.p;
+    let bp = b.data.p;
+    if (bp !== ap)
+        return (bp !== undefined ? bp : -1) - (ap !== undefined ? ap : -1);
+    let av = a.data.v;
+    let bv = b.data.v;
+    if (bv !== av)
+        return (bv !== undefined ? bv : -1) - (av !== undefined ? av : -1);
+    return a.data.c - b.data.c;
+}
 
 /**
  *
