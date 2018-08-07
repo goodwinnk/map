@@ -87,6 +87,8 @@ function updateGrouping() {
     let name = "Subsystem";
     if (grouping === "a") {
         name = "Assignee";
+    } else if (grouping === "p") {
+        name = "Priority";
     } else if (grouping === "ss") {
         name = "Subsystems";
     }
