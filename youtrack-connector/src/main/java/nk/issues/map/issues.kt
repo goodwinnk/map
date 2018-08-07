@@ -73,12 +73,16 @@ private fun <K, V> Map<K, V>.invert(): HashMap<V, K> {
     return inverted
 }
 
-fun compress(issues: Collection<IssueOverview>, subsystemFromQuery: (String) -> Boolean): CompressedIssues {
+fun compress(issues: Collection<IssueOverview>, subsystemFromQuery: (String) -> Boolean, priorities: List<String>): CompressedIssues {
     val assigneeEncodeMap = HashMap<String, Int>()
     val stateEncodeMap = HashMap<String, Int>()
     val priorityEncodeMap = HashMap<String, Int>()
     val subsystemEncodeMap = HashMap<String, Int>()
 
+    priorities.forEachIndexed { index, p -> 
+        priorityEncodeMap[p] = index
+    }
+    
     for (issue in issues) {
         encode(issue.assignee, assigneeEncodeMap)
         encode(issue.state, stateEncodeMap)
