@@ -15,20 +15,11 @@ data class IssuesRequest(
         val name: String,
         val filter: String,
         val isSubsystemFromQuery: (String) -> Boolean,
+        val priorities: List<String> = listOf("Minor", "Normal", "Major", "Critical"),
         val fileName: String = "$name.json"
 )
 
 private val requests = listOf(
-        IssuesRequest(
-                "resharper-all",
-                "Project: RSRP #Unresolved",
-                { true }
-        ),
-        IssuesRequest(
-                "idea-all",
-                "Project: IDEA #Unresolved",
-                { true }
-        ),
         IssuesRequest(
                 "kt-all",
                 "Project: KT #Unresolved",
@@ -76,6 +67,17 @@ private val requests = listOf(
                 "kt-docs",
                 "Project: KT #Unresolved Subsystems: Docs",
                 { it == "Docs" }
+        ),
+        IssuesRequest(
+                "resharper-all",
+                "Project: RSRP #Unresolved",
+                { true },
+                listOf("Minor", "Normal", "Major", "Critical", "Show-stopper")
+        ),
+        IssuesRequest(
+                "idea-all",
+                "Project: IDEA #Unresolved",
+                { true }
         )
 )
 
@@ -145,7 +147,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
         Thread.sleep(100)
     }
 
-    val compressedIssues = compress(all, request.isSubsystemFromQuery)
+    val compressedIssues = compress(all, request.isSubsystemFromQuery, request.priorities)
 
     val output = File(dir, request.fileName)
     output.createNewFile()
