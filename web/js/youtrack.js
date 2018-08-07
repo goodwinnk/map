@@ -187,7 +187,7 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
         return a.toLowerCase().localeCompare(b.toLowerCase());
     });
 
-    if (undefinedItem !== undefined) {
+    if (undefinedItem !== undefined && variantsCount !== undefined && variantsCount[UNSPECIFIED_VALUE] !== undefined) {
         variantsNameToId[undefinedItem] = UNSPECIFIED_VALUE;
         sortedNames.unshift(undefinedItem);
     }
