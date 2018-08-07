@@ -56,6 +56,16 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             function (ci, ss) {
                 return decodeAssignee(ci, ss);
             });
+    } else if (selectedGrouping === "p") {
+        groupedIssues = splitToGroups(
+            compressedIssues,
+            undefined,
+            function (issue) {
+                return [issue.p];
+            },
+            function (ci, p) {
+                return decodePriority(ci, p);
+            });
     } else {
         groupedIssues = splitToGroups(
             compressedIssues,
