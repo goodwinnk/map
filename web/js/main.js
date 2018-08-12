@@ -33,18 +33,6 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         return;
     }
 
-    const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
-    const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
-    colourRangeRainbow.push(1);
-
-    const colorScaleRainbow = d3.scaleLinear()
-        .domain(colourRangeRainbow)
-        .range(coloursRainbow)
-        .interpolate(d3.interpolateHcl);
-
-    const valueLogScale = d3.scaleLog()
-        .domain([1, VOTE_MAX + 1]);
-
     let groupedIssues;
     if (selectedGrouping === "a") {
         groupedIssues = splitToGroups(
@@ -80,17 +68,53 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
 
     
     let orderFunction;
-    let heatFunction;
-    
+
+    let colorFillFunction = null;
+
+    const colorScaleRainbowGenerator = function (heatFunction) {
+        const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
+        const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
+        colourRangeRainbow.push(1);
+
+        const colorScaleRainbow = d3.scaleLinear()
+            .domain(colourRangeRainbow)
+            .range(coloursRainbow)
+            .interpolate(d3.interpolateHcl);
+
+        const valueLogScale = d3.scaleLog()
+            .domain([1, VOTE_MAX + 1]);
+
+        return function(d) {
+            return colorScaleRainbow(valueLogScale(heatFunction(d)))
+        }
+    };
+
+    const colorScalePriority = function (d) {
+        const priority = d.data.p;
+        if (priority === 0) {
+            return "#43aded";
+        } else if (priority === 1) {
+            return "#396beb";
+        } else if (priority === 2) {
+            return "#ff7504";
+        } else if (priority === 3) {
+            return "#ff4222";
+        } else if (priority === 4) {
+            return "#E30000";
+        } else {
+            return "#7e7d7e";
+        }
+    };
+
     if (selectedHeat === "age") {
         orderFunction = ageOrderFunction;
-        heatFunction = ageHeatFunction;
+        colorFillFunction = colorScaleRainbowGenerator(ageHeatFunction);
     } else if (selectedHeat === "priority") {
         orderFunction = priorityVoteAgeOrderFunction;
-        heatFunction = priorityVoteAgeHeatFunction;
+        colorFillFunction = colorScalePriority;
     } else {
         orderFunction = voteAgeOrderFunction;
-        heatFunction = voteAgeHeatFunction;
+        colorFillFunction = colorScaleRainbowGenerator(voteAgeHeatFunction);
     }
     
     const root = d3.hierarchy(groupedIssues)
@@ -200,7 +224,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         .attr("class", "issue_polygon")
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
-            return colorScaleRainbow(valueLogScale(heatFunction(d)));
+            return colorFillFunction(d);
         })
         .on("click", function (d) {
             issueSelection.selectIssue(this, d);
@@ -513,13 +537,6 @@ function ageHeatFunction(d) {
 
 function ageOrderFunction(a, b) {
     return a.data.c - b.data.c;
-}
-
-function priorityVoteAgeHeatFunction(d) {
-    let p = d.data.p;
-    if (p === undefined)
-        return 1;
-    return Math.pow(2.5, p + 1);
 }
 
 function priorityVoteAgeOrderFunction(a, b) {
