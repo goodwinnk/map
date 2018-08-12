@@ -11,12 +11,12 @@
 }
 
 .issue_visited {
-    stroke: darkred;
+    stroke: darkgreen;
     stroke-width: 3px;
 }
 
 .issue_visited_inside {
-    stroke: darkred;
+    stroke: darkgreen;
     stroke-width: 1px;
 }
 
