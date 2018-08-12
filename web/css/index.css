@@ -55,28 +55,27 @@
 }
 
 .unknown_priority {
-    fill: #7e7d7e;
-    stroke: white;
+    fill: #b4b3b4;
 }
 
 .minor_priority {
     fill: #13dded;
-    stroke: white;
 }
 
 .normal_priority {
     fill: #396beb;
-    stroke: white;
 }
 
 .major_priority {
-    fill: #ff7504;
-    stroke: white;
+    fill: #ffbd5c;
 }
 
 .critical_priority {
+    fill: #e3665a;
+}
+
+.show_stopper_priority {
     fill: #E30000;
-    stroke: white;
 }
 
 .critical_year_circle {

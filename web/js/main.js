@@ -70,6 +70,9 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     let orderFunction;
 
     let colorFillFunction = null;
+    let classIssuePolygonFunction = function (d) {
+        return "issue_polygon";
+    };
 
     const colorScaleRainbowGenerator = function (heatFunction) {
         const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
@@ -89,29 +92,29 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         }
     };
 
-    const colorScalePriority = function (d) {
-        const priority = d.data.p;
-        if (priority === 0) {
-            return "#43aded";
-        } else if (priority === 1) {
-            return "#396beb";
-        } else if (priority === 2) {
-            return "#ff7504";
-        } else if (priority === 3) {
-            return "#ff4222";
-        } else if (priority === 4) {
-            return "#E30000";
-        } else {
-            return "#7e7d7e";
-        }
-    };
-
     if (selectedHeat === "age") {
         orderFunction = ageOrderFunction;
         colorFillFunction = colorScaleRainbowGenerator(ageHeatFunction);
     } else if (selectedHeat === "priority") {
         orderFunction = priorityVoteAgeOrderFunction;
-        colorFillFunction = colorScalePriority;
+        colorFillFunction = function () {};
+        classIssuePolygonFunction = function (d) {
+            const priority = d.data.p;
+            let priorityClass = "unknown_priority";
+            if (priority === 0) {
+                priorityClass = "minor_priority";
+            } else if (priority === 1) {
+                priorityClass = "normal_priority";
+            } else if (priority === 2) {
+                priorityClass = "major_priority";
+            } else if (priority === 3) {
+                priorityClass = "critical_priority";
+            } else if (priority === 4) {
+                priorityClass = "show_stopper_priority";
+            }
+
+            return "issue_polygon " + priorityClass;
+        }
     } else {
         orderFunction = voteAgeOrderFunction;
         colorFillFunction = colorScaleRainbowGenerator(voteAgeHeatFunction);
@@ -221,7 +224,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     ;
 
     const issuePolygons = node.append("polygon")
-        .attr("class", "issue_polygon")
+        .attr("class", classIssuePolygonFunction)
         .attr("points", HEXAGON_POINTS)
         .attr("fill", function (d) {
             return colorFillFunction(d);
