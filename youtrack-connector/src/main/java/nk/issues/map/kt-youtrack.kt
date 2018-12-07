@@ -40,33 +40,33 @@ private val requests = listOf(
                 "Project: KT #Unresolved and (" +
                         "Subsystems: {Backend*} or " +
                         "Subsystems: {Frontend*} or " +
-                        "Subsystems: IR or " +
-                        "Subsystems: {Language design} " +
+                        "Subsystems: {Language design} or " +
                         "Subsystems: {Binary Metadata}" +
                         ")",
-                { it.startsWith("Backend") || it.startsWith("Frontend") ||
-                        it == "IR" || it == "Language design" || it == "Binary Metadata" }
+                { it.startsWith("Backend")
+                        || it.startsWith("Frontend")
+                        || it == "Language design"
+                        || it == "Binary Metadata" }
         ),
         IssuesRequest(
                 "kt-other",
                 "Project: KT #Unresolved " +
                         "Subsystems: -{Backend*} " +
                         "Subsystems: -{Frontend*} " +
-                        "Subsystems: -IR " +
                         "Subsystems: -{Language design} " +
                         "Subsystems: -{IDE*} " +
                         "Subsystems: -{Tools*}" +
                         "Subsystems: -{Binary Metadata}",
                 {
                     !(it.startsWith("Backend") || it.startsWith("Frontend") ||
-                            it == "IR" || it == "Language design" || it == "Binary Metadata" ||
+                            it == "Language design" || it == "Binary Metadata" ||
                             it.startsWith("IDE") || it.startsWith("Tools"))
                 }
         ),
         IssuesRequest(
                 "kt-docs",
-                "Project: KT #Unresolved Subsystems: Docs",
-                { it == "Docs" }
+                "Project: KT #Unresolved Subsystems: {Docs & Examples}",
+                { it == "{Docs & Examples}" }
         ),
         IssuesRequest(
                 "resharper-all",
