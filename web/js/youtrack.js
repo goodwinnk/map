@@ -102,7 +102,10 @@ function updateHeat() {
         name = "Age";
     } else if (heat === "priority") {
         name = "Priority";
-    } 
+    } else if (heat === "updated") {
+        name = "Updated"
+    }
+
     document.getElementById("heat_selection").innerText = name;
 }
 

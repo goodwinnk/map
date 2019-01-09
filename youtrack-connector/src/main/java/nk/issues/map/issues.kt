@@ -10,6 +10,7 @@ class IssueOverview(
         val priorityColor: String,
         val state: String,
         val created: Long,
+        val updated: Long,
         val votes: Int,
         val assignee: String?,
         val subsystems: Array<String>) {
@@ -41,6 +42,7 @@ class IssueOverviewMappedCompressed(
         val p: Int?, /* priority */
         val st: Int, /* state */
         val c: Long, /* created */
+        val u: Long, /* updated */
         val v: Int, /* votes */
         val a: Int?,  /* assignee */
         val ss: Array<Int> /* subsystems */
@@ -100,6 +102,7 @@ fun compress(issues: Collection<IssueOverview>, subsystemFromQuery: (String) -> 
                 issue.priority?.let { priorityEncodeMap[issue.priority]!! },
                 stateEncodeMap[issue.state]!!,
                 issue.created,
+                issue.updated,
                 issue.votes,
                 issue.assignee?.let { assigneeEncodeMap[issue.assignee]!! },
                 issue.subsystems.map { subsystem -> subsystemEncodeMap[subsystem]!! }.toTypedArray()

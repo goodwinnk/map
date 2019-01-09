@@ -92,6 +92,21 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         }
     };
 
+    const linearScaleColorGenerator = function (heatFunction) {
+        const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
+        const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
+        colourRangeRainbow.push(1);
+
+        const colorScaleRainbow = d3.scaleLinear()
+            .domain(colourRangeRainbow)
+            .range(coloursRainbow)
+            .interpolate(d3.interpolateHcl);
+
+        return function(d) {
+            return colorScaleRainbow(heatFunction(d));
+        }
+    };
+
     if (selectedHeat === "age") {
         orderFunction = ageOrderFunction;
         colorFillFunction = colorScaleRainbowGenerator(ageHeatFunction);
@@ -115,6 +130,9 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
 
             return "issue_polygon " + priorityClass;
         }
+    } else if (selectedHeat === "updated") {
+        orderFunction = updatedOrderFunction;
+        colorFillFunction = linearScaleColorGenerator(updatedHeatFunction)
     } else {
         orderFunction = voteAgeOrderFunction;
         colorFillFunction = colorScaleRainbowGenerator(voteAgeHeatFunction);
@@ -540,6 +558,18 @@ function ageHeatFunction(d) {
 
 function ageOrderFunction(a, b) {
     return a.data.c - b.data.c;
+}
+
+function updatedOrderFunction(a, b) {
+    return a.data.u - b.data.u;
+}
+
+function updatedHeatFunction(d) {
+    let millisecondsDiff = Math.abs(d.data.u - today);
+    let fullYears = Math.floor(millisecondsDiff / MILISECONDS_IN_YEAR);
+
+    let roundTo5 = Math.min(fullYears, 5);
+    return 0.2 * roundTo5;
 }
 
 function priorityVoteAgeOrderFunction(a, b) {

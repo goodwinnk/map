@@ -167,6 +167,7 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     val priorityColor = fieldsMap["Priority"]?.obj("color")?.string("bg") ?: "#aaffff"
     val state = fieldsMap["State"]!!.array<String>("value")!![0]
     val created = fieldsMap["created"]!!.string("value")!!.toLong()
+    val updated = fieldsMap["updated"]!!.string("value")!!.toLong()
     val votes = fieldsMap["votes"]!!.string("value")!!.toInt()
     val assignee = fieldsMap["Assignee"]?.array<JsonObject>("value")?.first()?.string("value")
     val subsystems = (fieldsMap["Subsystems"] ?: fieldsMap["Subsystem"])
@@ -174,7 +175,7 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
             ?.toTypedArray()
             ?: arrayOf()
 
-    return IssueOverview(id, url, summary, priority, priorityColor, state, created, votes, assignee, subsystems)
+    return IssueOverview(id, url, summary, priority, priorityColor, state, created, updated, votes, assignee, subsystems)
 }
 
 fun String.parseJson(): Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!
