@@ -78,6 +78,11 @@ private val requests = listOf(
                 "idea-all",
                 "Project: IDEA #Unresolved",
                 { true }
+        ),
+        IssuesRequest(
+                "youtrack-all",
+                "Project: JT #Unresolved",
+                { true }
         )
 )
 

@@ -76,6 +76,8 @@ function fileName() {
             return "idea-all.json";
         } else if (query === "rsrp") {
             return "resharper-all.json";
+        } else if (query === "yt") {
+            return "youtrack-all.json";
         }
     }
 
@@ -127,7 +129,9 @@ function updateFilter() {
             name = "Docs";
         } else if (query === "idea") {
             name = "IDEA All (Bonus)"
-        }else if (query === "rsrp") {
+        } else if (query === "yt") {
+            name = "YouTrack (Bonus)"
+        } else if (query === "rsrp") {
             name = "ReSharper All (Bonus)"
         }
     }

@@ -561,15 +561,38 @@ function ageOrderFunction(a, b) {
 }
 
 function updatedOrderFunction(a, b) {
-    return a.data.u - b.data.u;
+    let aUpdated = 1.0 - updatedHeatFunction(a);
+    let bUpdated = 1.0 - updatedHeatFunction(b);
+
+    if (Math.abs(aUpdated - bUpdated) > 0.001) {
+        return aUpdated - bUpdated;
+    }
+
+    let aCreated = 1.0 - createdHeatFunction(a);
+    let bCreated = 1.0 - createdHeatFunction(b);
+    if (Math.abs(aCreated - bCreated) > 0.001) {
+        return aCreated - bCreated;
+    }
+
+    return b.data.v - a.data.v;
+}
+
+function createdHeatFunction(d) {
+    let maxYears = 5;
+    let millisecondsDiff = Math.abs(d.data.c - today);
+    let fullYears = Math.floor(millisecondsDiff / MILISECONDS_IN_YEAR);
+
+    let roundTo = Math.min(fullYears, maxYears);
+    return 1.0 / maxYears * roundTo;
 }
 
 function updatedHeatFunction(d) {
+    let maxYears = 5;
     let millisecondsDiff = Math.abs(d.data.u - today);
     let fullYears = Math.floor(millisecondsDiff / MILISECONDS_IN_YEAR);
 
-    let roundTo5 = Math.min(fullYears, 5);
-    return 0.2 * roundTo5;
+    let roundTo = Math.min(fullYears, maxYears);
+    return 1.0 / maxYears * roundTo;
 }
 
 function priorityVoteAgeOrderFunction(a, b) {
