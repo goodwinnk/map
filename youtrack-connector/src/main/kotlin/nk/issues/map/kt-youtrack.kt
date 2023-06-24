@@ -1,15 +1,15 @@
 package nk.issues.map
 
-import com.beust.klaxon.*
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import com.google.gson.Gson
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import java.io.File
-import java.io.FileInputStream
-import java.util.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 data class IssuesRequest(
         val name: String,
@@ -88,7 +88,7 @@ private val requests = listOf(
 
 private const val NUMBER_PER_REQUEST = 2000
 
-fun main(args: Array<String>) {
+fun main() {
     val today = Date()
 
     val dataDir = File("web/data")
@@ -133,7 +133,6 @@ fun processRequest(request: IssuesRequest, dir: File) {
 
         val jsonResult = httpJson(issuesRequest)
 
-        @Suppress("UNCHECKED_CAST")
         val issues = (jsonResult.parseJson() as JsonObject)
                 .array<JsonObject>("issue")!!
                 .map {
@@ -145,7 +144,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
         numberPerRequest = issues.size
 
         println("Add: ${issues.size} Left: ${number - all.size}")
-        if (issues.size == 0) {
+        if (issues.isEmpty()) {
             break
         }
 
@@ -161,12 +160,12 @@ fun processRequest(request: IssuesRequest, dir: File) {
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     val fields = issueObject.array<JsonObject>("field")!!
-    val fieldsMap: Map<String, JsonObject> = fields.map {
-        it.string("name")!! to it
-    }.toMap()
+    val fieldsMap: Map<String, JsonObject> = fields.associateBy {
+        it.string("name")!!
+    }
 
     val id = issueObject.string("id")!!
-    val url = "https://youtrack.jetbrains.com/issue/" + id
+    val url = "https://youtrack.jetbrains.com/issue/$id"
     val summary = fieldsMap["summary"]!!.string("value")!!
     val priority = fieldsMap["Priority"]?.array<String>("value")?.get(0)
     val priorityColor = fieldsMap["Priority"]?.obj("color")?.string("bg") ?: "#aaffff"
@@ -183,13 +182,7 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
     return IssueOverview(id, url, summary, priority, priorityColor, state, created, updated, votes, assignee, subsystems)
 }
 
-fun String.parseJson(): Any = Parser().parse(this.byteInputStream(charset("UTF-8")))!!
-
-fun parse(path: String): Any {
-    FileInputStream(path).use {
-        return Parser().parse(it)!!
-    }
-}
+fun String.parseJson(): Any = Parser.default().parse(this.byteInputStream(charset("UTF-8")))
 
 fun youTrack(path: String) = "https://youtrack.jetbrains.com$path"
 
