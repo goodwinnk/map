@@ -2,6 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="youtrack-connector" target="1.8" />
+      <module name="youtrack-connector.main" target="1.8" />
+      <module name="youtrack-connector.test" target="1.8" />
       <module name="youtrack-connector_main" target="1.8" />
       <module name="youtrack-connector_test" target="1.8" />
     </bytecodeTargetLevel>

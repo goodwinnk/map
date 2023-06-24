@@ -4,8 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector_main.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector_main.iml" group="youtrack-connector" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector_test.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector_test.iml" group="youtrack-connector" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector.main.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/youtrack-connector.test.iml" filepath="$PROJECT_DIR$/.idea/modules/youtrack-connector.test.iml" />
     </modules>
   </component>
 </project>
