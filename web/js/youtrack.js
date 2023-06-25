@@ -74,10 +74,6 @@ function fileName() {
             return "kt-docs.json";
         } else if (query === "idea") {
             return "idea-all.json";
-        } else if (query === "rsrp") {
-            return "resharper-all.json";
-        } else if (query === "yt") {
-            return "youtrack-all.json";
         }
     }
 

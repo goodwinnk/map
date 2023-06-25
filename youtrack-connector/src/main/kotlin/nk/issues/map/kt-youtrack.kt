@@ -1,5 +1,6 @@
 package nk.issues.map
 
+import com.beust.klaxon.JsonArray
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.google.gson.Gson
@@ -8,6 +9,7 @@ import org.apache.http.client.utils.URIBuilder
 import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.util.EntityUtils
 import java.io.File
+import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,24 +66,8 @@ private val requests = listOf(
                 }
         ),
         IssuesRequest(
-                "kt-docs",
-                "Project: KT #Unresolved Subsystems: {Docs & Examples}",
-                { it == "{Docs & Examples}" }
-        ),
-        IssuesRequest(
-                "resharper-all",
-                "Project: RSRP #Unresolved",
-                { true },
-                listOf("Minor", "Normal", "Major", "Critical", "Show-stopper")
-        ),
-        IssuesRequest(
                 "idea-all",
                 "Project: IDEA #Unresolved",
-                { true }
-        ),
-        IssuesRequest(
-                "youtrack-all",
-                "Project: JT #Unresolved",
                 { true }
         )
 )
@@ -108,42 +94,30 @@ fun main() {
 }
 
 fun processRequest(request: IssuesRequest, dir: File) {
-    var numberPerRequest = NUMBER_PER_REQUEST
-
-    var number = -1
-    val countRequest = URIBuilder(youTrack("/rest/issue/count")).apply {
-        addParameter("filter", request.filter)
-    }.toString()
-
-    while (number == -1) {
-        number = (httpJson(countRequest).parseJson() as JsonObject).int("value")!!
-
-        Thread.sleep(100)
-    }
-
-    println("Expected for ${request.name}: $number")
+    println("Processing ${request.name}")
 
     val all = LinkedHashSet<IssueOverview>()
-    while (all.size < number) {
-        val issuesRequest = URIBuilder(youTrack("/rest/issue")).apply {
-            addParameter("filter", request.filter)
-            addParameter("max", numberPerRequest.toString())
-            addParameter("after", all.size.toString())
+    var skip = 0
+    while (true) {
+        val issuesRequest = URIBuilder(youTrack("/issues")).apply {
+            addParameter("query", request.filter)
+            addParameter("${"$"}skip", skip.toString())
+            addParameter("${"$"}top", NUMBER_PER_REQUEST.toString())
+            addParameter("fields", "id,project(shortName),numberInProject,summary,votes,created,updated,customFields(name,value(name))")
         }.toString()
 
-        val jsonResult = httpJson(issuesRequest)
+        val jsonResult: String = httpJson(issuesRequest)
 
-        val issues = (jsonResult.parseJson() as JsonObject)
-                .array<JsonObject>("issue")!!
+        val issues = (jsonResult.parseJson() as JsonArray<*>)
                 .map {
-                    toIssueOverview(it)
+                    toIssueOverview(it as JsonObject)
                 }
 
         all.addAll(issues)
+        skip += issues.size
 
-        numberPerRequest = issues.size
+        println("Added: ${issues.size} All: ${all.size}")
 
-        println("Add: ${issues.size} Left: ${number - all.size}")
         if (issues.isEmpty()) {
             break
         }
@@ -159,32 +133,61 @@ fun processRequest(request: IssuesRequest, dir: File) {
 }
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
-    val fields = issueObject.array<JsonObject>("field")!!
-    val fieldsMap: Map<String, JsonObject> = fields.associateBy {
-        it.string("name")!!
+    try {
+        val customFields = issueObject.array<JsonObject>("customFields")!!
+        val customFieldsMap: Map<String, List<String>> = customFields.value.associate { jsonObject ->
+            val name = jsonObject.string("name")!!
+            val value: String? = (jsonObject["value"] as? JsonObject)?.string("name")
+            @Suppress("UNCHECKED_CAST") val values: List<String>? =
+                (jsonObject["value"] as? JsonArray<JsonObject>?)?.value?.map {
+                    it.string("name")!!
+                }
+
+            name to when {
+                values != null -> values
+                value != null -> listOf(value)
+                else -> listOf()
+            }
+        }
+
+        val number = issueObject.int("numberInProject")!!
+        val projectShortName = issueObject.obj("project")!!.string("shortName")!!
+        val id = "$projectShortName-$number"
+
+        val url = "https://youtrack.jetbrains.com/issue/$id"
+        val summary = issueObject.string("summary") ?: error("No summary")
+        val votes = issueObject.int("votes") ?: error("No votes")
+        val created = issueObject.long("created") ?: error("No created")
+        val updated = issueObject.long("updated") ?: error("No updated")
+
+        val state = customFieldsMap["State"]!!.first()
+        val priority = customFieldsMap["Priority"]!!.firstOrNull()
+        val assignee = customFieldsMap["Assignee"]?.firstOrNull()
+        val subsystems = (customFieldsMap["Subsystems"]?: customFieldsMap["Subsystem"])!!.toTypedArray()
+
+        val priorityColor = "#aaffff"
+
+        return IssueOverview(
+            id,
+            url,
+            summary,
+            priority,
+            priorityColor,
+            state,
+            created,
+            updated,
+            votes,
+            assignee,
+            subsystems
+        )
+    } catch (e: Exception) {
+        throw IllegalStateException("Error: ${issueObject.toJsonString(prettyPrint = true)}", e)
     }
-
-    val id = issueObject.string("id")!!
-    val url = "https://youtrack.jetbrains.com/issue/$id"
-    val summary = fieldsMap["summary"]!!.string("value")!!
-    val priority = fieldsMap["Priority"]?.array<String>("value")?.get(0)
-    val priorityColor = fieldsMap["Priority"]?.obj("color")?.string("bg") ?: "#aaffff"
-    val state = fieldsMap["State"]!!.array<String>("value")!![0]
-    val created = fieldsMap["created"]!!.string("value")!!.toLong()
-    val updated = fieldsMap["updated"]!!.string("value")!!.toLong()
-    val votes = fieldsMap["votes"]!!.string("value")!!.toInt()
-    val assignee = fieldsMap["Assignee"]?.array<JsonObject>("value")?.first()?.string("value")
-    val subsystems = (fieldsMap["Subsystems"] ?: fieldsMap["Subsystem"])
-            ?.array<String>("value")
-            ?.toTypedArray()
-            ?: arrayOf()
-
-    return IssueOverview(id, url, summary, priority, priorityColor, state, created, updated, votes, assignee, subsystems)
 }
 
 fun String.parseJson(): Any = Parser.default().parse(this.byteInputStream(charset("UTF-8")))
 
-fun youTrack(path: String) = "https://youtrack.jetbrains.com$path"
+fun youTrack(path: String) = "https://youtrack.jetbrains.com/api$path"
 
 fun httpJson(url: String): String {
     HttpClientBuilder.create().build().use { httpClient ->
