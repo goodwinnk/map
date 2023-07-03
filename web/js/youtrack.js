@@ -60,21 +60,7 @@ function dateDir(dateStr) {
 function fileName() {
     const query = getParam(QUERY_PARAM);
     if (query) {
-        if (query === "all") {
-            return "kt-all.json";
-        } else if (query === "compiler") {
-            return "kt-compiler.json";
-        } else if (query === "ide") {
-            return "kt-ide.json";
-        } else if (query === "tools") {
-            return "kt-tools.json";
-        } else if (query === "other") {
-            return "kt-other.json";
-        } else if (query === "docs") {
-            return "kt-docs.json";
-        } else if (query === "idea") {
-            return "idea-all.json";
-        }
+        return query + ".json";
     }
 
     return "kt-compiler.json";
