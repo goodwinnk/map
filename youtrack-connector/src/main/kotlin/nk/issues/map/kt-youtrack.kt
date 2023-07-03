@@ -195,6 +195,11 @@ fun httpJson(url: String): String {
         request.addHeader("content-type", "application/json")
         request.addHeader("accept", "application/json")
 
+        val ytToken = System.getenv("YT_TOKEN")
+        if (ytToken != null) {
+            request.addHeader("Authorization", "Bearer $ytToken")
+        }
+
         val result = httpClient.execute(request)
         return EntityUtils.toString(result.entity, "UTF-8")!!
     }
