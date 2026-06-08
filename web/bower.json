@@ -15,9 +15,9 @@
     "tests"
   ],
   "dependencies": {
-    "d3": "5.4.0",
-    "bootstrap": "^3.3.6",
-    "components-font-awesome": "5.0.6",
+    "d3": "5.16.0",
+    "bootstrap": "^3.4.1",
+    "components-font-awesome": "5.15.4",
     "store-js": "^2.0.12"
   }
 }

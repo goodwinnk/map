@@ -2,7 +2,16 @@ group = "goodwinnk.issues.map"
 version = "1.0-SNAPSHOT"
 
 plugins {
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "2.3.20"
+    id("application")
+}
+
+application {
+    mainClass.set("nk.issues.map.Kt_youtrackKt")
+}
+
+kotlin {
+    jvmToolchain(25)
 }
 
 repositories {
@@ -10,8 +19,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.13.2")
-    implementation("com.beust:klaxon:5.5")
-    implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("com.beust:klaxon:5.6")
+    implementation("com.google.code.gson:gson:2.14.0")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
 }

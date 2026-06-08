@@ -1,16 +1,18 @@
 var gulp = require('gulp');
 var livereload = require('gulp-livereload');
 
-gulp.task('default', function () {
+gulp.task('default', function (done) {
+    done();
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', function (done) {
     livereload.listen();
     gulp.watch(['index.html', "js/*.js", "css/*.css"]).on('change', livereload.changed);
+    done();
 });
 
 gulp.task('dist', function () {
-    gulp.src([
+    return gulp.src([
         './index.html',
         './js/*.js',
         './img/*.png',
