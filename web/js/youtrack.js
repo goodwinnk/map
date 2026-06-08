@@ -97,27 +97,25 @@ function updateFilter() {
     let name = "Compiler";
     const query = getParam(QUERY_PARAM);
     if (query) {
-        if (query === "all") {
+        if (query === "kt-all") {
             name = "All";
-        } else if (query === "compiler") {
+        } else if (query === "kt-compiler") {
             name = "Compiler";
-        } else if (query === "native") {
+        } else if (query === "kt-native") {
             name = "Native";
-        } else if (query === "aa") {
+        } else if (query === "kt-aa") {
             name = "Analysis API";
-        } else if (query === "tools") {
+        } else if (query === "kt-tools") {
             name ="Tools";
-        } else if (query === "other") {
+        } else if (query === "kt-other") {
             name = "Other";
         } else if (query === "docs") {
             name = "Docs";
-        } else if (query === "idea") {
+        } else if (query === "idea-all") {
             name = "IDEA All (Bonus)"
-        } else if (query === "yt") {
+        } else if (query === "yt-all") {
             name = "YouTrack (Bonus)"
-        } else if (query === "rsrp") {
-            name = "ReSharper All (Bonus)"
-        } else if (query === "tc") {
+        } else if (query === "tc-all") {
             name = "TeamCity (Bonus)"
         }
     }
