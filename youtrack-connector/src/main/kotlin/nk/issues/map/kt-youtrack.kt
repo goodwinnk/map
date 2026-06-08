@@ -28,14 +28,19 @@ private val requests = listOf(
                 { true }
         ),
         IssuesRequest(
-                "kt-ide",
-                "Project: Kotlin #Unresolved Subsystems: {IDE*}",
-                { it.startsWith("IDE") }
+                "kt-aa",
+                "Project: Kotlin #Unresolved Subsystems: {Analysis API*}",
+                { it.startsWith("Analysis API") }
         ),
         IssuesRequest(
                 "kt-tools",
                 "Project: Kotlin #Unresolved Subsystems: {Tools*}",
                 { it.startsWith("Tools")}
+        ),
+        IssuesRequest(
+            "kt-native",
+            "Project: Kotlin #Unresolved Subsystems: {Native*}",
+            { it.startsWith("Native")}
         ),
         IssuesRequest(
                 "kt-compiler",
@@ -56,19 +61,31 @@ private val requests = listOf(
                         "Subsystems: -{Backend*} " +
                         "Subsystems: -{Frontend*} " +
                         "Subsystems: -{Language design} " +
-                        "Subsystems: -{IDE*} " +
+                        "Subsystems: -{Analysis API*} " +
                         "Subsystems: -{Tools*}" +
+                        "Subsystems: -{Native*}" +
                         "Subsystems: -{Binary Metadata}",
-                {
-                    !(it.startsWith("Backend") || it.startsWith("Frontend") ||
+                { !(
+                            it.startsWith("Backend") || it.startsWith("Frontend") ||
                             it == "Language design" || it == "Binary Metadata" ||
-                            it.startsWith("IDE") || it.startsWith("Tools"))
-                }
+                            it.startsWith("Analysis API") || it.startsWith("Tools") ||
+                            it.startsWith("Native")
+                        ) }
         ),
         IssuesRequest(
                 "idea-all",
                 "Project: IDEA #Unresolved",
                 { true }
+        ),
+        IssuesRequest(
+            "yt-all",
+            "Project: JT #Unresolved",
+            { true }
+        ),
+        IssuesRequest(
+            "tc-all",
+            "Project: TW #Unresolved",
+            { true }
         )
 )
 
@@ -78,7 +95,7 @@ fun main() {
     val today = Date()
 
     val dataDir = File("web/data")
-    dataDir.mkdir()
+    dataDir.mkdirs()
     val dataFile = File(dataDir, "data.json")
     dataFile.createNewFile()
     val lastStr = SimpleDateFormat("dd.MM.yyyy").format(today)
@@ -101,9 +118,10 @@ fun processRequest(request: IssuesRequest, dir: File) {
     while (true) {
         val issuesRequest = URIBuilder(youTrack("/issues")).apply {
             addParameter("query", request.filter)
-            addParameter("${"$"}skip", skip.toString())
-            addParameter("${"$"}top", NUMBER_PER_REQUEST.toString())
-            addParameter("fields", "id,project(shortName),numberInProject,summary,votes,created,updated,customFields(name,value(name))")
+            addParameter($$"$skip", skip.toString())
+            addParameter($$"$top", NUMBER_PER_REQUEST.toString())
+            addParameter("fields",
+                "id,project(shortName),numberInProject,summary,votes,created,updated,customFields(name,value(name))")
         }.toString()
 
         val jsonResult: String = httpJson(issuesRequest)
@@ -130,6 +148,7 @@ fun processRequest(request: IssuesRequest, dir: File) {
     val output = File(dir, request.fileName)
     output.createNewFile()
     output.writeText(Gson().toJson(compressedIssues))
+    println("Saved to ${output.absolutePath}")
 }
 
 fun toIssueOverview(issueObject: JsonObject): IssueOverview {
@@ -161,9 +180,12 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
         val updated = issueObject.long("updated") ?: error("No updated")
 
         val state = customFieldsMap["State"]!!.first()
-        val priority = customFieldsMap["Priority"]!!.firstOrNull()
+        val priority = (customFieldsMap["Priority"] ?: customFieldsMap["Severity"])!!.firstOrNull()
         val assignee = customFieldsMap["Assignee"]?.firstOrNull()
-        val subsystems = (customFieldsMap["Subsystems"]?: customFieldsMap["Subsystem"])!!.toTypedArray()
+        val subsystems = (
+                customFieldsMap["Subsystems"]?:
+                customFieldsMap["Subsystem"]
+                )?.toTypedArray() ?: emptyArray()
 
         val priorityColor = "#aaffff"
 

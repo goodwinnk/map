@@ -101,8 +101,10 @@ function updateFilter() {
             name = "All";
         } else if (query === "compiler") {
             name = "Compiler";
-        } else if (query === "ide") {
-            name = "IDE";
+        } else if (query === "native") {
+            name = "Native";
+        } else if (query === "aa") {
+            name = "Analysis API";
         } else if (query === "tools") {
             name ="Tools";
         } else if (query === "other") {
@@ -115,6 +117,8 @@ function updateFilter() {
             name = "YouTrack (Bonus)"
         } else if (query === "rsrp") {
             name = "ReSharper All (Bonus)"
+        } else if (query === "tc") {
+            name = "TeamCity (Bonus)"
         }
     }
 
