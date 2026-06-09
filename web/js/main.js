@@ -284,6 +284,34 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             return d.data.v;
         });
 
+    const inProgressStateId = Object.keys(compressedIssues.states).find(
+        key => compressedIssues.states[key].toLowerCase() === "in progress"
+    );
+    if (inProgressStateId !== undefined) {
+        const inProgressIssues = node.filter(function (d) {
+            console.log(d.data.st);
+            if (d.data.st == inProgressStateId) {
+                console.log(d.data.id);
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+        const assigneeGroup = inProgressIssues.append("g")
+            .attr("class", "assignee_icon")
+            .attr("transform", "translate(0, 0)");
+
+        assigneeGroup.append("circle")
+            .attr("class", "assignee_icon_head")
+            .attr("r", 4)
+            .attr("cy", -4);
+
+        assigneeGroup.append("path")
+            .attr("class", "assignee_icon_body")
+            .attr("d", "M -6 8 Q 0 -8 6 8");
+    }
+
     const labelsSelection = mainG.selectAll(".group_label")
         .data(root.descendants().filter(function (d) {
             return d !== root && d.children;

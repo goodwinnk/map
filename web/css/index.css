@@ -99,6 +99,24 @@
     fill: none;
 }
 
+.assignee_icon {
+    cursor: pointer;
+}
+
+.assignee_icon_head {
+    pointer-events: none;
+    fill: rgba(0, 0, 0, 0.45);
+    stroke: none;
+}
+
+.assignee_icon_body {
+    pointer-events: none;
+    fill: rgba(0, 0, 0, 0.45);
+    stroke: none;
+    stroke-width: 2px;
+    stroke-linecap: round;
+}
+
 .vote_text {
     pointer-events: none;
     font-family: Arial, serif;
