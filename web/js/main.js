@@ -251,9 +251,9 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             issueSelection.selectIssue(this, d);
         });
 
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 10; i++) {
         const numberOfYears = i;
-        const yearRadius = RADIUS / 6 * (6 - numberOfYears);
+        const yearRadius = RADIUS / 11 * (11 - numberOfYears);
 
         node
             .filter(function (d) {
