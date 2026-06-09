@@ -70,7 +70,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     let orderFunction;
 
     let colorFillFunction = null;
-    let classIssuePolygonFunction = function (d) {
+    let classIssuePolygonFunction = function () {
         return "issue_polygon";
     };
 
@@ -300,13 +300,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     );
     if (inProgressStateId !== undefined) {
         const inProgressIssues = node.filter(function (d) {
-            console.log(d.data.st);
-            if (d.data.st == inProgressStateId) {
-                console.log(d.data.id);
-                return true;
-            } else {
-                return false;
-            }
+            return d.data.st === inProgressStateId;
         });
 
         const assigneeGroup = inProgressIssues.append("g")
@@ -647,8 +641,21 @@ function priorityVoteAgeOrderFunction(a, b) {
 }
 
 /**
+ * @typedef {Object} Issue
+ * @property {string} id - Issue ID (e.g., "KT-1234")
+ * @property {string} s  - Summary
+ * @property {number} [p] - Priority ID (optional)
+ * @property {number} st - State ID
+ * @property {number} c  - Created timestamp (ms)
+ * @property {number} u  - Updated timestamp (ms)
+ * @property {number} v  - Votes count
+ * @property {number} [a] - Assignee ID (optional)
+ * @property {number[]} ss - Array of Subsystem IDs
+ */
+
+/**
  *
- * @param {{issues:Array()}}compressedIssues
+ * @param {{issues:Array[Issue]}}compressedIssues
  * @param groupSelector
  * @param selectedGroup
  * @param groupPresenter
@@ -698,8 +705,7 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
 }
 
 function zoomed() {
-    const event = d3.event;
-    mainG.attr("transform", event.transform);
+    mainG.attr("transform", d3.event.transform);
 }
 
 function hexagon() {

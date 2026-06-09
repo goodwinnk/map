@@ -123,7 +123,7 @@ function updateFilter() {
     document.getElementById("filter_selection").innerText = name;
 }
 
-function closeLegend(isGotIt) {
+function closeLegend() {
     store.set("first.visit", "false");
     document.getElementById('legend-panel').style.display = 'none';
 }
