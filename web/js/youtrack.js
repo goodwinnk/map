@@ -106,7 +106,7 @@ function updateFilter() {
         } else if (query === "kt-aa") {
             name = "Analysis API";
         } else if (query === "kt-tools") {
-            name ="Tools";
+            name = "Tools";
         } else if (query === "kt-other") {
             name = "Other";
         } else if (query === "docs") {
@@ -203,7 +203,7 @@ function fillFilter(variantsObject, variantsCount, parameterName, clearParams, d
 
     variantsNameToId["All"] = undefined;
     sortedNames.unshift("All");
-    
+
     sortedNames.forEach(function (key) {
         const value = variantsNameToId[key];
         const a = document.createElement("a");

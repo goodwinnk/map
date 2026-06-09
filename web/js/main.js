@@ -66,7 +66,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             });
     }
 
-    
+
     let orderFunction;
 
     let colorFillFunction = null;
@@ -75,7 +75,12 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     };
 
     const colorScaleRainbowGenerator = function (heatFunction) {
-        const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
+        const coloursRainbow = [
+            "#2c7bb6", "#00a6ca",
+            "#00ccbc", "#90eb9d",
+            "#ffff8c", "#f9d057",
+            "#f29e2e", "#e76818",
+            "#d7191c"];
         const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
         colourRangeRainbow.push(1);
 
@@ -87,13 +92,18 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         const valueLogScale = d3.scaleLog()
             .domain([1, VOTE_MAX + 1]);
 
-        return function(d) {
+        return function (d) {
             return colorScaleRainbow(valueLogScale(heatFunction(d)))
         }
     };
 
     const linearScaleColorGenerator = function (heatFunction) {
-        const coloursRainbow = ["#2c7bb6", "#00a6ca", "#00ccbc", "#90eb9d", "#ffff8c", "#f9d057", "#f29e2e", "#e76818", "#d7191c"];
+        const coloursRainbow = [
+            "#2c7bb6", "#00a6ca",
+            "#00ccbc", "#90eb9d",
+            "#ffff8c", "#f9d057",
+            "#f29e2e", "#e76818",
+            "#d7191c"];
         const colourRangeRainbow = d3.range(0, 1, 1.0 / (coloursRainbow.length - 1));
         colourRangeRainbow.push(1);
 
@@ -102,7 +112,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             .range(coloursRainbow)
             .interpolate(d3.interpolateHcl);
 
-        return function(d) {
+        return function (d) {
             return colorScaleRainbow(heatFunction(d));
         }
     };
@@ -112,7 +122,8 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         colorFillFunction = colorScaleRainbowGenerator(ageHeatFunction);
     } else if (selectedHeat === "priority") {
         orderFunction = priorityVoteAgeOrderFunction;
-        colorFillFunction = function () {};
+        colorFillFunction = function () {
+        };
         classIssuePolygonFunction = function (d) {
             const priority = d.data.p;
             let priorityClass = "unknown_priority";
@@ -137,14 +148,14 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         orderFunction = voteAgeOrderFunction;
         colorFillFunction = colorScaleRainbowGenerator(voteAgeHeatFunction);
     }
-    
+
     const root = d3.hierarchy(groupedIssues)
         .sort(function (a, b) {
             let aIsChild = a.data.children === undefined;
             let bIsChild = b.data.children === undefined;
 
             if (aIsChild && bIsChild) {
-                return orderFunction(a,b)
+                return orderFunction(a, b)
             }
 
             if (!aIsChild && !bIsChild) {
@@ -409,7 +420,7 @@ IssueSelection.prototype.forget = function () {
     return false;
 };
 
-IssueSelection.prototype.updateVisited = function(issueId) {
+IssueSelection.prototype.updateVisited = function (issueId) {
     let [key, visitedStr] = this.fetchKeyToBucketString(issueId);
 
     const visited = visitedStr.split("\n");
@@ -420,7 +431,7 @@ IssueSelection.prototype.updateVisited = function(issueId) {
     }
 };
 
-IssueSelection.prototype.removeVisited = function(issueId) {
+IssueSelection.prototype.removeVisited = function (issueId) {
     let [key, visitedStr] = this.fetchKeyToBucketString(issueId);
     store.set(key, visitedStr.replace(issueId + "\n", ""));
 };
@@ -525,7 +536,7 @@ IssueSelection.prototype.markUnvisited = function (polygonNode) {
     d3.select(oldParent).selectAll(".issue_visited_inside").remove();
 };
 
-IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
+IssueSelection.prototype.selectIssue = function (eventReceiver, d) {
     if (this.selected) {
         this.markVisited(this.selected);
     } else {
@@ -566,7 +577,7 @@ IssueSelection.prototype.selectIssue = function(eventReceiver, d) {
 
 function voteAgeHeatFunction(d) {
     let votes = d.data.v;
-    if (!votes) 
+    if (!votes)
         return 1;
     return votes + 1;
 }
@@ -653,7 +664,7 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
         if (issueGroups === undefined || issueGroups.length === 0) {
             issueGroups = [undefined]
         }
-        
+
         for (let index = 0; index < issueGroups.length; index++) {
             let group = issueGroups[index];
             if (selectedGroup !== undefined && selectedGroup !== null) {
@@ -672,7 +683,7 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
             if (typeof groupNode === "undefined") {
                 groupNode = {
                     children: [],
-                    name: groupPresenter(compressedIssues, group) 
+                    name: groupPresenter(compressedIssues, group)
                 };
                 groupNodes[group] = groupNode;
             }
@@ -703,7 +714,7 @@ function hexagon() {
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {
-    return subsystems.map(function(subsystem) {
+    return subsystems.map(function (subsystem) {
         return decodeSubsystem(compressedIssues, subsystem)
     });
 }
@@ -714,7 +725,7 @@ function decodeSubsystem(compressedIssues, subsystem) {
 }
 
 function decodeAssignee(compressedIssues, assignee) {
-    if (assignee === null || assignee === undefined)  return "Unassigned";
+    if (assignee === null || assignee === undefined) return "Unassigned";
     return compressedIssues.assignees[assignee];
 }
 
