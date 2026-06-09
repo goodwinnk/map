@@ -300,7 +300,8 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
     );
     if (inProgressStateId !== undefined) {
         const inProgressIssues = node.filter(function (d) {
-            return d.data.st === inProgressStateId;
+            console.log(d.data.st, inProgressStateId);
+            return d.data.st.toString() === inProgressStateId;
         });
 
         const assigneeGroup = inProgressIssues.append("g")
@@ -310,11 +311,11 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         assigneeGroup.append("circle")
             .attr("class", "assignee_icon_head")
             .attr("r", 4)
-            .attr("cy", -4);
+            .attr("cy", -5);
 
         assigneeGroup.append("path")
             .attr("class", "assignee_icon_body")
-            .attr("d", "M -6 8 Q 0 -8 6 8");
+            .attr("d", "M -9 8 A 9 9 0 0 1 9 8");
     }
 
     const labelsSelection = mainG.selectAll(".group_label")
