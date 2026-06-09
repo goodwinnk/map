@@ -4,9 +4,9 @@ const A2 = RADIUS / Math.cos(Math.PI / 6);
 const MILISECONDS_IN_YEAR = 31536000000;
 const HEXAGON_POINTS = hexagon();
 
-const VOTE_BASE_SIZE = 5;
-const VOTE_MAX = 200;
-const VOTE_FACTOR = (SIZE - VOTE_BASE_SIZE) / VOTE_MAX;
+const VOTE_BASE_SIZE = 7;
+const VOTE_MAX = 150;
+const VOTE_FACTOR = (SIZE - 3 - VOTE_BASE_SIZE) / VOTE_MAX;
 
 const width = window.innerWidth,
     height = Math.max(window.innerHeight - 55, 100);
