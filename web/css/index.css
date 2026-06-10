@@ -29,6 +29,42 @@
     right: 0;
     top: 10px;
     width: 600px;
+    z-index: 1000;
+}
+
+.panel-title {
+    word-break: break-word;
+    line-height: 1.4;
+    padding-right: 20px;
+}
+
+.selected_issue_field_container {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: baseline;
+}
+
+.selected_issue_label {
+    font-weight: normal;
+    margin-right: 5px;
+    color: #777;
+    display: inline-block;
+    width: 80px;
+    flex-shrink: 0;
+    font-size: 0.9em;
+}
+
+.selected_issue_panel_field {
+    word-break: break-word;
+}
+
+#selected-issue-ref {
+    color: #337ab7;
+    text-decoration: none;
+}
+
+#selected-issue-ref:hover {
+    text-decoration: underline;
 }
 
 .panel_popup {
@@ -40,10 +76,6 @@
     right: 0;
     top: 10px;
     width: 600px;
-}
-
-.selected_issue_panel_field {
-    margin-right: 30px;
 }
 
 .group circle {

@@ -379,11 +379,22 @@ function IssueSelection(compressedIssues) {
     this.priorityElement = document.getElementById("selected-issue-priority");
     this.statusElement = document.getElementById("selected-issue-status");
     this.assigneeElement = document.getElementById("selected-issue-assignee");
+    this.votesElement = document.getElementById("selected-issue-votes");
+    this.createdElement = document.getElementById("selected-issue-created");
+    this.updatedElement = document.getElementById("selected-issue-updated");
 
     this.insertBefore = null;
     this.lastGroupNode = null;
 
     this.selected = null;
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === "Escape") {
+            if (this.selectedIssuePanel.style.display === "block") {
+                this.closePopup();
+            }
+        }
+    });
 }
 
 IssueSelection.prototype.closePopup = function () {
@@ -568,6 +579,9 @@ IssueSelection.prototype.selectIssue = function (eventReceiver, d) {
     this.subsystemElement.innerText = decodeSubsystems(this.compressedIssues, data.ss);
     this.statusElement.innerText = decodeState(this.compressedIssues, data.st);
     this.assigneeElement.innerText = decodeAssignee(this.compressedIssues, data.a);
+    this.votesElement.innerText = (data.v || 0).toString();
+    this.createdElement.innerText = new Date(data.c).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+    this.updatedElement.innerText = new Date(data.u).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
 function voteAgeHeatFunction(d) {
@@ -721,9 +735,10 @@ function hexagon() {
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {
+    if (!subsystems || subsystems.length === 0) return "Unspecified";
     return subsystems.map(function (subsystem) {
         return decodeSubsystem(compressedIssues, subsystem)
-    });
+    }).join(", ");
 }
 
 function decodeSubsystem(compressedIssues, subsystem) {

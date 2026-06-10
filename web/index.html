@@ -93,20 +93,47 @@
 <div class="selected_issue_panel" id="selected-issue-panel">
     <div class="panel panel-default">
         <div class="panel-heading">
-            <a id="selected-issue-ref" target="_blank"></a>
-            <span id="selected-issue-description">Select issue</span>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="issueSelection.closePopup()">
                 <span aria-hidden="true">&times;</span>
             </button>
+            <h3 class="panel-title">
+                <a id="selected-issue-ref" target="_blank"></a>
+                <span id="selected-issue-description">Select issue</span>
+            </h3>
         </div>
         <div class="panel-body">
-            <span id="selected-issue-priority" class="selected_issue_panel_field"></span>
-            <span id="selected-issue-status" class="selected_issue_panel_field"></span>
-            <span id="selected-issue-assignee" class="selected_issue_panel_field"></span>
-            <span id="selected-issue-subsystem" class="selected_issue_panel_field"></span>
-            <span id="selected-issue-action" class="selected_issue_panel_field">
-                <a onclick="issueSelection.forget()">Forget</a>
-            </span>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Priority:</span>
+                <span id="selected-issue-priority" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Status:</span>
+                <span id="selected-issue-status" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Assignee:</span>
+                <span id="selected-issue-assignee" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Subsystem:</span>
+                <span id="selected-issue-subsystem" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Votes:</span>
+                <span id="selected-issue-votes" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Created:</span>
+                <span id="selected-issue-created" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container">
+                <span class="selected_issue_label">Updated:</span>
+                <span id="selected-issue-updated" class="selected_issue_panel_field"></span>
+            </div>
+            <div class="selected_issue_field_container" style="margin-top: 10px;">
+                <button type="button" class="btn btn-primary btn-xs" onclick="issueSelection.closePopup()" style="margin-right: 5px;">Close</button>
+                <a class="btn btn-default btn-xs" onclick="issueSelection.forget()">Forget</a>
+            </div>
         </div>
     </div>
 </div>
@@ -156,7 +183,7 @@
     showLegend();
 
     let today = new Date();
-    document.getElementById("date_selection").innerText = "" + today.getDate() + "." + today.getMonth() + "." + today.getFullYear();
+    document.getElementById("date_selection").innerText = today.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
     document.getElementById("copyright-year").innerText = today.getFullYear();
 </script>
 
