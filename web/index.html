@@ -17,17 +17,17 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#" style="display: flex; flex-direction: row; align-items: center;">
                 <img src="img/icon_YouTrack_32.png" width="28" height="28" title="Issues Map">
-                <span>Issues Map</span>
+                <div style="display: flex; flex-direction: column;">
+                    <span>Issues Map</span>
+                    <small id="date_selection" style="font-size: 11px; font-weight: normal; color: #777; margin-top: 2px; line-height: 1.1;"></small>
+                </div>
             </a>
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li class="navbar-text">
-                    <span id="date_selection"></span>
-                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         Tickets: <span id="filter_selection">Kotlin - All</span>
@@ -191,7 +191,6 @@
     showLegend();
 
     let today = new Date();
-    document.getElementById("date_selection").innerText = today.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
     document.getElementById("copyright-year").innerText = today.getFullYear();
 </script>
 

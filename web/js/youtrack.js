@@ -136,7 +136,7 @@ function showLegend() {
 }
 
 function updateDate(dates) {
-    document.getElementById("date_selection").innerText = getDate(dates);
+    document.getElementById("date_selection").innerText = "Snapshot from " + getDate(dates);
 }
 
 /**
