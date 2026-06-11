@@ -326,7 +326,7 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
 
         ghostGroup.append("path")
             .attr("class", "ghost_icon_body")
-            .attr("d", "M -6 8 L -6 -2 A 6 6 0 0 1 6 -2 L 6 8 L 4 6 L 2 8 L 0 6 L -2 8 L -4 6 Z");
+            .attr("d", "M -4 8 L -6 -2 A 6 6 0 0 1 6 -2 L 4 8 L 2 6 L 0 8 L -2 6 Z");
     }
 
     const labelsSelection = mainG.selectAll(".group_label")
