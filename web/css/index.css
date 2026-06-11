@@ -168,6 +168,99 @@
     height: 30px;
 }
 
+.navbar-custom {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    min-height: 50px;
+}
+
+.navbar-custom .navbar-brand {
+    color: #000 !important;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.navbar-custom .navbar-brand img {
+    margin-right: 10px;
+}
+
+.navbar-custom .navbar-nav > li > a {
+    color: #555;
+    transition: color 0.2s;
+}
+
+.navbar-custom .navbar-nav > li > a:hover,
+.navbar-custom .navbar-nav > li > a:focus {
+    color: #000;
+    background-color: transparent;
+}
+
+.navbar-custom .navbar-nav > .open > a,
+.navbar-custom .navbar-nav > .open > a:hover,
+.navbar-custom .navbar-nav > .open > a:focus {
+    color: #000;
+    background-color: #e9ecef;
+}
+
+.navbar-custom .navbar-text {
+    color: #6c757d;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.navbar-custom .navbar-btn {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    color: #495057;
+    transition: all 0.2s;
+}
+
+.navbar-custom .navbar-btn:hover {
+    background-color: #e2e6ea;
+    color: #212529;
+    border-color: #dae0e5;
+}
+
+.navbar-custom .navbar-toggle {
+    border-color: #ddd;
+}
+
+.navbar-custom .navbar-toggle:hover,
+.navbar-custom .navbar-toggle:focus {
+    background-color: #ddd;
+}
+
+.navbar-custom .navbar-toggle .icon-bar {
+    background-color: #888;
+}
+
+.navbar-custom .dropdown-menu {
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.15);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.navbar-custom .dropdown-menu > li > a {
+    color: #333;
+    padding: 8px 20px;
+}
+
+.navbar-custom .dropdown-menu > li > a:hover,
+.navbar-custom .dropdown-menu > li > a:focus {
+    color: #16181b;
+    background-color: #f8f9fa;
+}
+
 .footer {
     width: 100%;
     color: #666;
