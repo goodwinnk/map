@@ -94,29 +94,29 @@ function updateHeat() {
 }
 
 function updateFilter() {
-    let name = "Compiler";
+    let name = "Kotlin - Compiler";
     const query = getParam(QUERY_PARAM);
     if (query) {
         if (query === "kt-all") {
-            name = "All";
+            name = "Kotlin - All";
         } else if (query === "kt-compiler") {
-            name = "Compiler";
+            name = "Kotlin - Compiler";
         } else if (query === "kt-native") {
-            name = "Native";
+            name = "Kotlin - Native";
         } else if (query === "kt-aa") {
-            name = "Analysis API";
+            name = "Kotlin - Analysis API";
         } else if (query === "kt-tools") {
-            name = "Tools";
+            name = "Kotlin - Tools";
         } else if (query === "kt-other") {
-            name = "Other";
+            name = "Kotlin - Other";
         } else if (query === "docs") {
             name = "Docs";
         } else if (query === "idea-all") {
-            name = "IDEA All (Bonus)"
+            name = "IDEA - All"
         } else if (query === "yt-all") {
-            name = "YouTrack (Bonus)"
+            name = "YouTrack - All"
         } else if (query === "tc-all") {
-            name = "TeamCity (Bonus)"
+            name = "TeamCity - All"
         }
     }
 
