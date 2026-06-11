@@ -28,39 +28,16 @@
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Heat: <span id="heat_selection">Votes & Age</span>
+                        Tickets: <span id="filter_selection">Kotlin - All</span>
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a onclick="heatHref(undefined)">Votes</a></li>
-                        <li><a onclick="heatHref('priority')">Priority</a></li>
-                        <li><a onclick="heatHref('age')">Age</a></li>
-                        <li><a onclick="heatHref('updated')">Updated</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Group: <span id="group_selection">Subsystem</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a onclick="groupingHref(undefined)">Subsystem</a></li>
-                        <li><a onclick="groupingHref('a')">Assignee</a></li>
-                        <li><a onclick="groupingHref('p')">Priority</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Filter: <span id="filter_selection">All</span>
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a onclick="queryHref('kt-all')">All</a></li>
-                        <li><a onclick="queryHref('kt-aa')">Analysis API</a></li>
-                        <li><a onclick="queryHref('kt-tools')">Tools</a></li>
-                        <li><a onclick="queryHref('kt-native')">Native</a></li>
-                        <li><a onclick="queryHref(undefined)">Compiler</a></li>
-                        <li><a onclick="queryHref('kt-other')">Other</a></li>
+                        <li><a onclick="queryHref('kt-all')">Kotlin - All</a></li>
+                        <li><a onclick="queryHref('kt-aa')">Kotlin - Analysis API</a></li>
+                        <li><a onclick="queryHref('kt-tools')">Kotlin - Tools</a></li>
+                        <li><a onclick="queryHref('kt-native')">Kotlin - Native</a></li>
+                        <li><a onclick="queryHref(undefined)">Kotlin - Compiler</a></li>
+                        <li><a onclick="queryHref('kt-other')">Kotlin - Other</a></li>
                     </ul>
                 </li>
                 <li class="dropdown" id="subsystem_dropdown">
@@ -77,6 +54,29 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" id="assignee_dropdown_menu">
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Group: <span id="group_selection">Subsystem</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="groupingHref(undefined)">Subsystem</a></li>
+                        <li><a onclick="groupingHref('a')">Assignee</a></li>
+                        <li><a onclick="groupingHref('p')">Priority</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Heat: <span id="heat_selection">Votes & Age</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="heatHref(undefined)">Votes</a></li>
+                        <li><a onclick="heatHref('priority')">Priority</a></li>
+                        <li><a onclick="heatHref('age')">Age</a></li>
+                        <li><a onclick="heatHref('updated')">Updated</a></li>
                     </ul>
                 </li>
             </ul>
