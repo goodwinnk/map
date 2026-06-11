@@ -304,7 +304,10 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             return d.data.st.toString() === inProgressStateId;
         });
 
-        const assigneeGroup = inProgressIssues.append("g")
+        const assignedInProgress = inProgressIssues.filter(d => d.data.a !== null && d.data.a !== undefined);
+        const unassignedInProgress = inProgressIssues.filter(d => d.data.a === null || d.data.a === undefined);
+
+        const assigneeGroup = assignedInProgress.append("g")
             .attr("class", "assignee_icon")
             .attr("transform", "translate(0, 0)");
 
@@ -316,6 +319,14 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
         assigneeGroup.append("path")
             .attr("class", "assignee_icon_body")
             .attr("d", "M -9 8 A 9 9 0 0 1 9 8");
+
+        const ghostGroup = unassignedInProgress.append("g")
+            .attr("class", "ghost_icon")
+            .attr("transform", "translate(0,0)");
+
+        ghostGroup.append("path")
+            .attr("class", "ghost_icon_body")
+            .attr("d", "M -6 8 L -6 -2 A 6 6 0 0 1 6 -2 L 6 8 L 4 6 L 2 8 L 0 6 L -2 8 L -4 6 Z");
     }
 
     const labelsSelection = mainG.selectAll(".group_label")

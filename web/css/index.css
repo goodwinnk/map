@@ -149,6 +149,17 @@
     stroke-linecap: round;
 }
 
+.ghost_icon {
+    cursor: pointer;
+}
+
+.ghost_icon_body {
+    pointer-events: none;
+    fill: rgba(0, 0, 0, 0.25);
+    stroke: rgba(0, 0, 0, 0.45);
+    stroke-width: 1px;
+}
+
 .vote_text {
     pointer-events: none;
     font-family: Arial, serif;
