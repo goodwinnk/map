@@ -265,6 +265,8 @@ html, body {
     background-color: #fff;
     border: 1px solid rgba(0,0,0,.15);
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .navbar-custom .dropdown-menu > li > a {
