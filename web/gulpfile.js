@@ -23,7 +23,7 @@ gulp.task('dist', function () {
         './bower_components/d3/d3.min.js',
         './bower_components/store-js/dist/store.legacy.min.js',
         './bower_components/bootstrap/dist/css/bootstrap.min.css'
-    ], {base: "."})
+    ], {base: ".", encoding: false})
         .pipe(gulp.dest(function (file) {
             return './web/' + file.base;
         }));
