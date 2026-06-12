@@ -63,7 +63,7 @@ function fileName() {
         return query + ".json";
     }
 
-    return "kt-compiler.json";
+    return "kt-all.json";
 }
 
 function updateGrouping() {
@@ -94,7 +94,7 @@ function updateHeat() {
 }
 
 function updateFilter() {
-    let name = "Kotlin - Compiler";
+    let name = "Kotlin - All";
     const query = getParam(QUERY_PARAM);
     if (query) {
         if (query === "kt-all") {
