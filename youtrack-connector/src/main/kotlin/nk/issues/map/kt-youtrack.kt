@@ -86,6 +86,16 @@ private val requests = listOf(
             "tc-all",
             "Project: TW #Unresolved",
             { true }
+        ),
+        IssuesRequest(
+            "rsrp-all",
+            "Project: RSRP #Unresolved",
+            { true }
+        ),
+        IssuesRequest(
+            "junie-all",
+            "Project: JUNIE #Unresolved",
+            { true }
         )
 )
 

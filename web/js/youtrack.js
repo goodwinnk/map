@@ -117,6 +117,10 @@ function updateFilter() {
             name = "YouTrack - All"
         } else if (query === "tc-all") {
             name = "TeamCity - All"
+        } else if (query === "junie-all") {
+            name = "Junie - All"
+        } else if (query === "rsrp-all") {
+            name = "ReSharper - All"
         }
     }
 
