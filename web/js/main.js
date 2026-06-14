@@ -1,8 +1,9 @@
 const SIZE = 20;
 const RADIUS = SIZE / 2 * Math.sqrt(2);
 const A2 = RADIUS / Math.cos(Math.PI / 6);
+const HALF_HEIGHT = A2 / 2;
 const MILISECONDS_IN_YEAR = 31536000000;
-const HEXAGON_POINTS = hexagon();
+const HEXAGON_POINTS = `0,${-A2} ${RADIUS},${-HALF_HEIGHT} ${RADIUS},${HALF_HEIGHT} 0,${A2} ${-RADIUS},${HALF_HEIGHT} ${-RADIUS},${-HALF_HEIGHT}`;
 
 const VOTE_BASE_SIZE = 7;
 const VOTE_MAX = 150;
@@ -744,17 +745,6 @@ function splitToGroups(compressedIssues, selectedGroup, groupSelector, groupPres
 
 function zoomed() {
     mainG.attr("transform", d3.event.transform);
-}
-
-function hexagon() {
-    let a = A2 / 2;
-    return "" +
-        0 + "," + (-A2) + " " +
-        RADIUS + "," + (-a) + " " +
-        RADIUS + "," + a + " " +
-        0 + "," + A2 + " " +
-        (-RADIUS) + "," + a + " " +
-        (-RADIUS) + "," + (-a);
 }
 
 function decodeSubsystems(compressedIssues, subsystems) {
