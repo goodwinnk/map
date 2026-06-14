@@ -97,22 +97,23 @@ function updateHeat() {
 
 function updateFilter() {
     const filterNames = {
+        "air-all": "Air - All",
+        "cpp-all": "CLion - All",
+        "go-all": "GoLang - All",
+        "idea-all": "IDEA - All",
+        "junie-all": "Junie - All",
+        "kt-aa": "Kotlin - Analysis API",
         "kt-all": "Kotlin - All",
         "kt-compiler": "Kotlin - Compiler",
         "kt-native": "Kotlin - Native",
-        "kt-aa": "Kotlin - Analysis API",
-        "kt-tools": "Kotlin - Tools",
         "kt-other": "Kotlin - Other",
-        "idea-all": "IDEA - All",
-        "yt-all": "YouTrack - All",
-        "tc-all": "TeamCity - All",
-        "junie-all": "Junie - All",
-        "rsrp-all": "ReSharper - All",
-        "air-all": "Air - All",
+        "kt-tools": "Kotlin - Tools",
         "rider-all": "Rider - All",
-        "go-all": "GoLang - All",
+        "rsrp-all": "ReSharper - All",
+        "tc-all": "TeamCity - All",
         "web-all": "WebStorm - All",
         "wi-all": "PhpStorm - All",
+        "yt-all": "YouTrack - All",
     };
 
     const query = getParam(QUERY_PARAM);

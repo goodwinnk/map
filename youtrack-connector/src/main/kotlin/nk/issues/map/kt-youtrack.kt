@@ -126,6 +126,11 @@ private val requests = listOf(
         "Project: WI #Unresolved",
         { true }
     ),
+    IssuesRequest(
+        "cpp-all",
+        "Project: CPP #Unresolved",
+        { true }
+    ),
 )
 
 private const val NUMBER_PER_REQUEST = 2000
