@@ -101,12 +101,16 @@ function updateFilter() {
         "kt-aa": "Kotlin - Analysis API",
         "kt-tools": "Kotlin - Tools",
         "kt-other": "Kotlin - Other",
-        "docs": "Docs",
         "idea-all": "IDEA - All",
         "yt-all": "YouTrack - All",
         "tc-all": "TeamCity - All",
         "junie-all": "Junie - All",
         "rsrp-all": "ReSharper - All",
+        "air-all": "Air - All",
+        "rider-all": "Rider - All",
+        "go-all": "GoLang - All",
+        "web-all": "WebStorm - All",
+        "wi-all": "PhpStorm - All",
     };
 
     const query = getParam(QUERY_PARAM);

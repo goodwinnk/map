@@ -22,81 +22,110 @@ data class IssuesRequest(
 )
 
 private val requests = listOf(
-        IssuesRequest(
-                "kt-all",
-                "Project: KT #Unresolved",
-                { true }
-        ),
-        IssuesRequest(
-                "kt-aa",
-                "Project: Kotlin #Unresolved Subsystems: {Analysis API*}",
-                { it.startsWith("Analysis API") }
-        ),
-        IssuesRequest(
-                "kt-tools",
-                "Project: Kotlin #Unresolved Subsystems: {Tools*}",
-                { it.startsWith("Tools")}
-        ),
-        IssuesRequest(
-            "kt-native",
-            "Project: Kotlin #Unresolved Subsystems: {Native*}",
-            { it.startsWith("Native")}
-        ),
-        IssuesRequest(
-                "kt-compiler",
-                "Project: KT #Unresolved and (" +
-                        "Subsystems: {Backend*} or " +
-                        "Subsystems: {Frontend*} or " +
-                        "Subsystems: {Language design} or " +
-                        "Subsystems: {Binary Metadata}" +
-                        ")",
-                { it.startsWith("Backend")
-                        || it.startsWith("Frontend")
-                        || it == "Language design"
-                        || it == "Binary Metadata" }
-        ),
-        IssuesRequest(
-                "kt-other",
-                "Project: KT #Unresolved " +
-                        "Subsystems: -{Backend*} " +
-                        "Subsystems: -{Frontend*} " +
-                        "Subsystems: -{Language design} " +
-                        "Subsystems: -{Analysis API*} " +
-                        "Subsystems: -{Tools*}" +
-                        "Subsystems: -{Native*}" +
-                        "Subsystems: -{Binary Metadata}",
-                { !(
-                            it.startsWith("Backend") || it.startsWith("Frontend") ||
+    IssuesRequest(
+        "kt-all",
+        "Project: KT #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "kt-aa",
+        "Project: Kotlin #Unresolved Subsystems: {Analysis API*}",
+        { it.startsWith("Analysis API") }
+    ),
+    IssuesRequest(
+        "kt-tools",
+        "Project: Kotlin #Unresolved Subsystems: {Tools*}",
+        { it.startsWith("Tools") }
+    ),
+    IssuesRequest(
+        "kt-native",
+        "Project: Kotlin #Unresolved Subsystems: {Native*}",
+        { it.startsWith("Native") }
+    ),
+    IssuesRequest(
+        "kt-compiler",
+        "Project: KT #Unresolved and (" +
+                "Subsystems: {Backend*} or " +
+                "Subsystems: {Frontend*} or " +
+                "Subsystems: {Language design} or " +
+                "Subsystems: {Binary Metadata}" +
+                ")",
+        {
+            it.startsWith("Backend")
+                    || it.startsWith("Frontend")
+                    || it == "Language design"
+                    || it == "Binary Metadata"
+        }
+    ),
+    IssuesRequest(
+        "kt-other",
+        "Project: KT #Unresolved " +
+                "Subsystems: -{Backend*} " +
+                "Subsystems: -{Frontend*} " +
+                "Subsystems: -{Language design} " +
+                "Subsystems: -{Analysis API*} " +
+                "Subsystems: -{Tools*}" +
+                "Subsystems: -{Native*}" +
+                "Subsystems: -{Binary Metadata}",
+        {
+            !(
+                    it.startsWith("Backend") || it.startsWith("Frontend") ||
                             it == "Language design" || it == "Binary Metadata" ||
                             it.startsWith("Analysis API") || it.startsWith("Tools") ||
                             it.startsWith("Native")
-                        ) }
-        ),
-        IssuesRequest(
-                "idea-all",
-                "Project: IDEA #Unresolved",
-                { true }
-        ),
-        IssuesRequest(
-            "yt-all",
-            "Project: JT #Unresolved",
-            { true }
-        ),
-        IssuesRequest(
-            "tc-all",
-            "Project: TW #Unresolved",
-            { true }
-        ),
-        IssuesRequest(
-            "rsrp-all",
-            "Project: RSRP #Unresolved",
-            { true }
-        ),
-        IssuesRequest(
-            "junie-all",
-            "Project: JUNIE #Unresolved",
-            { true }
-        )
+                    )
+        }
+    ),
+    IssuesRequest(
+        "idea-all",
+        "Project: IDEA #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "yt-all",
+        "Project: JT #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "tc-all",
+        "Project: TW #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "rsrp-all",
+        "Project: RSRP #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "junie-all",
+        "Project: JUNIE #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "air-all",
+        "Project: AIR #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "rider-all",
+        "Project: RIDER #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "go-all",
+        "Project: GO #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "web-all",
+        "Project: WEB #Unresolved",
+        { true }
+    ),
+    IssuesRequest(
+        "wi-all",
+        "Project: WI #Unresolved",
+        { true }
+    ),
 )
 
 private const val NUMBER_PER_REQUEST = 2000
@@ -190,7 +219,7 @@ fun toIssueOverview(issueObject: JsonObject): IssueOverview {
         val updated = issueObject.long("updated") ?: error("No updated")
 
         val state = customFieldsMap["State"]!!.first()
-        val priority = (customFieldsMap["Priority"] ?: customFieldsMap["Severity"])!!.firstOrNull()
+        val priority: String? = (customFieldsMap["Priority"] ?: customFieldsMap["Severity"])?.firstOrNull()
         val assignee = customFieldsMap["Assignee"]?.firstOrNull()
         val subsystems = (
                 customFieldsMap["Subsystems"]?:
