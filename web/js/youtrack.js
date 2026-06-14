@@ -94,35 +94,23 @@ function updateHeat() {
 }
 
 function updateFilter() {
-    let name = "Kotlin - All";
+    const filterNames = {
+        "kt-all": "Kotlin - All",
+        "kt-compiler": "Kotlin - Compiler",
+        "kt-native": "Kotlin - Native",
+        "kt-aa": "Kotlin - Analysis API",
+        "kt-tools": "Kotlin - Tools",
+        "kt-other": "Kotlin - Other",
+        "docs": "Docs",
+        "idea-all": "IDEA - All",
+        "yt-all": "YouTrack - All",
+        "tc-all": "TeamCity - All",
+        "junie-all": "Junie - All",
+        "rsrp-all": "ReSharper - All",
+    };
+
     const query = getParam(QUERY_PARAM);
-    if (query) {
-        if (query === "kt-all") {
-            name = "Kotlin - All";
-        } else if (query === "kt-compiler") {
-            name = "Kotlin - Compiler";
-        } else if (query === "kt-native") {
-            name = "Kotlin - Native";
-        } else if (query === "kt-aa") {
-            name = "Kotlin - Analysis API";
-        } else if (query === "kt-tools") {
-            name = "Kotlin - Tools";
-        } else if (query === "kt-other") {
-            name = "Kotlin - Other";
-        } else if (query === "docs") {
-            name = "Docs";
-        } else if (query === "idea-all") {
-            name = "IDEA - All"
-        } else if (query === "yt-all") {
-            name = "YouTrack - All"
-        } else if (query === "tc-all") {
-            name = "TeamCity - All"
-        } else if (query === "junie-all") {
-            name = "Junie - All"
-        } else if (query === "rsrp-all") {
-            name = "ReSharper - All"
-        }
-    }
+    const name = filterNames[query] ?? "Kotlin - All";
 
     document.getElementById("filter_selection").innerText = name;
 }
