@@ -280,6 +280,19 @@ html, body {
     background-color: #f8f9fa;
 }
 
+.navbar-custom .dropdown-label {
+    font-weight: normal;
+    color: #777;
+    font-size: 12px;
+    margin-right: 2px;
+}
+
+.navbar-custom .dropdown-selection {
+    font-weight: normal;
+    color: #333;
+    font-size: 15px;
+}
+
 .footer {
     width: 100%;
     color: #666;
