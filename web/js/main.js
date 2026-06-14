@@ -5,6 +5,13 @@ const HALF_HEIGHT = A2 / 2;
 const MILISECONDS_IN_YEAR = 31536000000;
 const HEXAGON_POINTS = `0,${-A2} ${RADIUS},${-HALF_HEIGHT} ${RADIUS},${HALF_HEIGHT} 0,${A2} ${-RADIUS},${HALF_HEIGHT} ${-RADIUS},${-HALF_HEIGHT}`;
 
+const VISITED_INSET = 2;
+const INNER_RADIUS = RADIUS - VISITED_INSET;
+const INNER_A2 = A2 - VISITED_INSET;
+const INNER_HALF_HEIGHT = INNER_A2 / 2;
+
+const HEXAGON_POINTS_INNER = `0,${-INNER_A2} ${INNER_RADIUS},${-INNER_HALF_HEIGHT} ${INNER_RADIUS},${INNER_HALF_HEIGHT} 0,${INNER_A2} ${-INNER_RADIUS},${INNER_HALF_HEIGHT} ${-INNER_RADIUS},${-INNER_HALF_HEIGHT}`;
+
 const VOTE_BASE_SIZE = 7;
 const VOTE_MAX = 150;
 const VOTE_FACTOR = (SIZE - 3 - VOTE_BASE_SIZE) / VOTE_MAX;
@@ -501,69 +508,18 @@ IssueSelection.prototype.clearVisited = function () {
 };
 
 IssueSelection.prototype.markVisited = function (polygonNode) {
-    const oldParent = polygonNode.parentNode;
-    const oldGrand = oldParent.parentNode;
+    d3.select(polygonNode).classed("issue_selected", false);
 
-    if (this.insertBefore != null) {
-        oldGrand.insertBefore(oldParent, this.insertBefore);
-    } else {
-        oldGrand.appendChild(oldParent);
-    }
-
-    const oldPolygon = d3.select(polygonNode);
-    oldPolygon.classed("issue_selected", false);
-    oldPolygon.classed("issue_visited", true);
-
-    const lengthX = 3;
-    const lengthY = 4;
-    const margin = 0;
-
-    d3.select(oldParent)
-        .append("line")
-        .attr("x1", 0)
-        .attr("y1", -A2 + margin)
-        .attr("x2", 0)
-        .attr("y2", -A2 + margin + lengthY)
-        .attr("class", "issue_visited_inside");
-
-    d3.select(oldParent)
-        .append("line")
-        .attr("x1", 0)
-        .attr("y1", A2 - (margin + lengthY))
-        .attr("x2", 0)
-        .attr("y2", A2 - margin)
-        .attr("class", "issue_visited_inside");
-
-    d3.select(oldParent)
-        .append("line")
-        .attr("x1", RADIUS - (margin + lengthX))
-        .attr("y1", 0)
-        .attr("x2", RADIUS - margin)
-        .attr("y2", 0)
-        .attr("class", "issue_visited_inside");
-
-    d3.select(oldParent)
-        .append("line")
-        .attr("x1", -RADIUS + (margin + lengthX))
-        .attr("y1", 0)
-        .attr("x2", -RADIUS + margin)
-        .attr("y2", 0)
-        .attr("class", "issue_visited_inside");
+    d3.select(polygonNode.parentNode)
+        .insert("polygon", function () {
+            return polygonNode.nextSibling;
+        })
+        .attr("class", "issue_visited_inside")
+        .attr("points", HEXAGON_POINTS_INNER)
 };
 
 IssueSelection.prototype.markUnvisited = function (polygonNode) {
-    const oldParent = polygonNode.parentNode;
-    const oldGrand = oldParent.parentNode;
-
-    const oldPolygon = d3.select(polygonNode);
-    oldPolygon.classed("issue_selected", false);
-    oldPolygon.classed("issue_visited", false);
-
-    if (this.lastGroupNode != null) {
-        oldGrand.insertBefore(oldParent, this.lastGroupNode.nextSibling);
-    }
-
-    d3.select(oldParent).selectAll(".issue_visited_inside").remove();
+    d3.select(polygonNode.parentNode).selectAll(".issue_visited_inside").remove();
 };
 
 IssueSelection.prototype.selectIssue = function (eventReceiver, d) {
@@ -589,7 +545,6 @@ IssueSelection.prototype.selectIssue = function (eventReceiver, d) {
             grand.appendChild(parent);
         }
 
-        polygon.classed("issue_visited", false);
         polygon.classed("issue_selected", true);
 
         this.selected = eventReceiver;

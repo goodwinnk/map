@@ -10,14 +10,10 @@
     stroke-width: 3px;
 }
 
-.issue_visited {
-    stroke: darkgreen;
-    stroke-width: 3px;
-}
-
 .issue_visited_inside {
-    stroke: darkgreen;
-    stroke-width: 1px;
+    stroke: #24a000;
+    stroke-width: 3px;
+    fill: none;
 }
 
 .selected_issue_panel {
