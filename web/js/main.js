@@ -295,13 +295,15 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             return d.data.v;
         });
 
-    const inProgressStateId = Object.keys(compressedIssues.states).find(
-        key => compressedIssues.states[key].toLowerCase() === "in progress"
+    const workStateIds = Object.keys(compressedIssues.states).filter(
+        key => {
+            const state = compressedIssues.states[key].toLowerCase();
+            return state === "in progress" || state === "investigating" || state === "under investigation";
+        }
     );
-    if (inProgressStateId !== undefined) {
+    if (workStateIds.length > 0) {
         const inProgressIssues = node.filter(function (d) {
-            console.log(d.data.st, inProgressStateId);
-            return d.data.st.toString() === inProgressStateId;
+            return workStateIds.includes(d.data.st.toString());
         });
 
         const assignedInProgress = inProgressIssues.filter(d => d.data.a !== null && d.data.a !== undefined);
