@@ -41,8 +41,8 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             function (issue) {
                 return [issue.a];
             },
-            function (ci, ss) {
-                return decodeAssignee(ci, ss);
+            function (ci, a) {
+                return decodeAssignee(ci, a);
             });
     } else if (selectedGrouping === "p") {
         groupedIssues = splitToGroups(
@@ -53,6 +53,16 @@ function addIssues(compressedIssues, selectedSubsystem, selectedAssignee, select
             },
             function (ci, p) {
                 return decodePriority(ci, p);
+            });
+    } else if (selectedGrouping === "st") {
+        groupedIssues = splitToGroups(
+            compressedIssues,
+            undefined,
+            function (issue) {
+                return [issue.st];
+            },
+            function (ci, st) {
+                return decodeState(ci, st);
             });
     } else {
         groupedIssues = splitToGroups(

@@ -73,6 +73,8 @@ function updateGrouping() {
         name = "Assignee";
     } else if (grouping === "p") {
         name = "Priority";
+    } else if (grouping === "st") {
+        name = "State";
     } else if (grouping === "ss") {
         name = "Subsystems";
     }
